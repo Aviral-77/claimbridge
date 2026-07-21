@@ -1,0 +1,993 @@
+[
+  {
+    "patient_id": "P001",
+    "documents": {
+      "discharge_summary": {
+        "file": "P001_discharge_summary.pdf",
+        "layout": "corporate"
+      },
+      "final_bill": {
+        "file": "P001_final_bill.pdf"
+      },
+      "lab_report": {
+        "file": "P001_lab_report.pdf"
+      }
+    },
+    "expected_extraction": {
+      "patient": {
+        "name": "Rahul Kumar",
+        "age": 37,
+        "gender": "Male",
+        "uhid": "LC133326",
+        "abha": "13-2535-4582-4811",
+        "phone": "9885329037",
+        "address": "130, Preet Vihar, Delhi"
+      },
+      "encounter": {
+        "ip_number": "IP/2026/4611",
+        "admission_datetime": "2026-04-05T19:00:00",
+        "discharge_datetime": "2026-04-09T23:00:00",
+        "length_of_stay_days": 4,
+        "department": "General Surgery",
+        "consultant": "Dr. Nidhi Bansal"
+      },
+      "diagnoses": [
+        {
+          "text": "Acute appendicitis",
+          "icd10_code": "K35.80",
+          "icd10_display": "Unspecified acute appendicitis"
+        }
+      ],
+      "procedures": [
+        {
+          "text": "Laparoscopic appendectomy",
+          "snomed_code": "174041007"
+        }
+      ],
+      "medications_on_discharge": [
+        "Inj. Ceftriaxone 1g IV BD x 3 days",
+        "Tab. Metronidazole 400mg TDS x 5 days",
+        "Tab. Paracetamol 650mg SOS"
+      ],
+      "labs": [
+        {
+          "test": "WBC Count",
+          "result": "14.2",
+          "unit": "10^3/uL",
+          "ref_range": "4.0-11.0",
+          "flag": "HIGH"
+        },
+        {
+          "test": "CRP",
+          "result": "48",
+          "unit": "mg/L",
+          "ref_range": "<5",
+          "flag": "HIGH"
+        },
+        {
+          "test": "Haemoglobin",
+          "result": "13.1",
+          "unit": "g/dL",
+          "ref_range": "13.0-17.0",
+          "flag": "NORMAL"
+        }
+      ],
+      "billing": {
+        "line_items": [
+          {
+            "description": "Room & Nursing Charges",
+            "detail": "4 days @ Rs.3200",
+            "amount": 12800,
+            "gst_percent": 0
+          },
+          {
+            "description": "Operation Theatre Charges",
+            "detail": "1",
+            "amount": 15749,
+            "gst_percent": 0
+          },
+          {
+            "description": "Surgeon Fee - Laparoscopic appendectomy",
+            "detail": "1",
+            "amount": 22500,
+            "gst_percent": 0
+          },
+          {
+            "description": "Anaesthesia Charges",
+            "detail": "1",
+            "amount": 6750,
+            "gst_percent": 0
+          },
+          {
+            "description": "Consultant Visits",
+            "detail": "5 visits",
+            "amount": 4000,
+            "gst_percent": 0
+          },
+          {
+            "description": "Investigations / Laboratory",
+            "detail": "as per annexure",
+            "amount": 5210,
+            "gst_percent": 0
+          },
+          {
+            "description": "Pharmacy & Consumables",
+            "detail": "as per annexure",
+            "amount": 5804,
+            "gst_percent": 12
+          },
+          {
+            "description": "Nursing Procedures",
+            "detail": "-",
+            "amount": 814,
+            "gst_percent": 0
+          }
+        ],
+        "sub_total": 73627,
+        "gst_total": 696,
+        "grand_total": 74323
+      },
+      "coverage": {
+        "insurer": "Star Health & Allied Insurance",
+        "policy_number": "SH-2024-36687537",
+        "tpa": "Direct (No TPA)",
+        "mode": "reimbursement"
+      }
+    }
+  },
+  {
+    "patient_id": "P002",
+    "documents": {
+      "discharge_summary": {
+        "file": "P002_discharge_summary.pdf",
+        "layout": "nursing_home"
+      },
+      "final_bill": {
+        "file": "P002_final_bill.pdf"
+      },
+      "lab_report": {
+        "file": "P002_lab_report.pdf"
+      }
+    },
+    "expected_extraction": {
+      "patient": {
+        "name": "Meena Sharma",
+        "age": 70,
+        "gender": "Female",
+        "uhid": "LC207175",
+        "abha": null,
+        "phone": "9815831819",
+        "address": "89, Preet Vihar, Ghaziabad"
+      },
+      "encounter": {
+        "ip_number": "IP/2026/7201",
+        "admission_datetime": "2026-04-23T14:30:00",
+        "discharge_datetime": "2026-04-27T12:30:00",
+        "length_of_stay_days": 4,
+        "department": "Internal Medicine",
+        "consultant": "Dr. A. Venkatesh"
+      },
+      "diagnoses": [
+        {
+          "text": "Type 2 diabetes mellitus with hyperglycemia",
+          "icd10_code": "E11.65",
+          "icd10_display": "Type 2 diabetes mellitus with hyperglycemia"
+        }
+      ],
+      "procedures": [],
+      "medications_on_discharge": [
+        "Inj. Human Insulin (Actrapid) per sliding scale",
+        "Tab. Metformin 500mg BD",
+        "Tab. Glimepiride 2mg OD"
+      ],
+      "labs": [
+        {
+          "test": "Fasting Blood Sugar",
+          "result": "246",
+          "unit": "mg/dL",
+          "ref_range": "70-100",
+          "flag": "HIGH"
+        },
+        {
+          "test": "HbA1c",
+          "result": "10.4",
+          "unit": "%",
+          "ref_range": "<5.7",
+          "flag": "HIGH"
+        },
+        {
+          "test": "Serum Creatinine",
+          "result": "1.1",
+          "unit": "mg/dL",
+          "ref_range": "0.7-1.3",
+          "flag": "NORMAL"
+        }
+      ],
+      "billing": {
+        "line_items": [
+          {
+            "description": "Room & Nursing Charges",
+            "detail": "4 days @ Rs.2500",
+            "amount": 10000,
+            "gst_percent": 0
+          },
+          {
+            "description": "Consultant Visits",
+            "detail": "5 visits",
+            "amount": 4000,
+            "gst_percent": 0
+          },
+          {
+            "description": "Investigations / Laboratory",
+            "detail": "as per annexure",
+            "amount": 2928,
+            "gst_percent": 0
+          },
+          {
+            "description": "Pharmacy & Consumables",
+            "detail": "as per annexure",
+            "amount": 11042,
+            "gst_percent": 12
+          },
+          {
+            "description": "Nursing Procedures",
+            "detail": "-",
+            "amount": 1476,
+            "gst_percent": 0
+          }
+        ],
+        "sub_total": 29446,
+        "gst_total": 1325,
+        "grand_total": 30771
+      },
+      "coverage": {
+        "insurer": "HDFC ERGO Health",
+        "policy_number": "HE-POL-71662963",
+        "tpa": "MDIndia Health Insurance TPA",
+        "mode": "cashless"
+      }
+    }
+  },
+  {
+    "patient_id": "P003",
+    "documents": {
+      "discharge_summary": {
+        "file": "P003_discharge_summary.pdf",
+        "layout": "corporate"
+      },
+      "final_bill": {
+        "file": "P003_final_bill.pdf"
+      },
+      "lab_report": {
+        "file": "P003_lab_report.pdf"
+      }
+    },
+    "expected_extraction": {
+      "patient": {
+        "name": "Rajesh Chauhan",
+        "age": 45,
+        "gender": "Male",
+        "uhid": "LC205907",
+        "abha": "58-5554-8428-6977",
+        "phone": "9838119557",
+        "address": "42, Vaishali, Ghaziabad"
+      },
+      "encounter": {
+        "ip_number": "IP/2026/2169",
+        "admission_datetime": "2026-04-23T09:00:00",
+        "discharge_datetime": "2026-04-25T09:00:00",
+        "length_of_stay_days": 2,
+        "department": "Internal Medicine",
+        "consultant": "Dr. Seema Kapoor"
+      },
+      "diagnoses": [
+        {
+          "text": "Acute gastroenteritis with dehydration",
+          "icd10_code": "A09",
+          "icd10_display": "Infectious gastroenteritis and colitis, unspecified"
+        }
+      ],
+      "procedures": [],
+      "medications_on_discharge": [
+        "IV Fluids - RL and NS",
+        "Inj. Ondansetron 4mg IV TDS",
+        "Tab. Ofloxacin-Ornidazole BD x 5 days",
+        "ORS sachets"
+      ],
+      "labs": [
+        {
+          "test": "Serum Sodium",
+          "result": "131",
+          "unit": "mEq/L",
+          "ref_range": "135-145",
+          "flag": "LOW"
+        },
+        {
+          "test": "Serum Potassium",
+          "result": "3.2",
+          "unit": "mEq/L",
+          "ref_range": "3.5-5.1",
+          "flag": "LOW"
+        },
+        {
+          "test": "Stool Routine",
+          "result": "Pus cells present",
+          "unit": "-",
+          "ref_range": "-",
+          "flag": "ABNORMAL"
+        }
+      ],
+      "billing": {
+        "line_items": [
+          {
+            "description": "Room & Nursing Charges",
+            "detail": "2 days @ Rs.3200",
+            "amount": 6400,
+            "gst_percent": 0
+          },
+          {
+            "description": "Consultant Visits",
+            "detail": "3 visits",
+            "amount": 2400,
+            "gst_percent": 0
+          },
+          {
+            "description": "Investigations / Laboratory",
+            "detail": "as per annexure",
+            "amount": 3940,
+            "gst_percent": 0
+          },
+          {
+            "description": "Pharmacy & Consumables",
+            "detail": "as per annexure",
+            "amount": 9480,
+            "gst_percent": 12
+          },
+          {
+            "description": "Nursing Procedures",
+            "detail": "-",
+            "amount": 1794,
+            "gst_percent": 0
+          }
+        ],
+        "sub_total": 24014,
+        "gst_total": 1137,
+        "grand_total": 25151
+      },
+      "coverage": {
+        "insurer": "Star Health & Allied Insurance",
+        "policy_number": "SH-2024-99949389",
+        "tpa": "Vidal Health TPA",
+        "mode": "cashless"
+      }
+    }
+  },
+  {
+    "patient_id": "P004",
+    "documents": {
+      "discharge_summary": {
+        "file": "P004_discharge_summary.pdf",
+        "layout": "nursing_home"
+      },
+      "final_bill": {
+        "file": "P004_final_bill.pdf"
+      },
+      "lab_report": {
+        "file": "P004_lab_report.pdf"
+      }
+    },
+    "expected_extraction": {
+      "patient": {
+        "name": "Vikram Gupta",
+        "age": 51,
+        "gender": "Male",
+        "uhid": "LC944151",
+        "abha": null,
+        "phone": "9852235350",
+        "address": "55, Preet Vihar, Noida"
+      },
+      "encounter": {
+        "ip_number": "IP/2026/7482",
+        "admission_datetime": "2026-06-09T18:15:00",
+        "discharge_datetime": "2026-06-12T14:15:00",
+        "length_of_stay_days": 3,
+        "department": "General Surgery",
+        "consultant": "Dr. R. K. Malhotra"
+      },
+      "diagnoses": [
+        {
+          "text": "Inguinal hernia, unilateral",
+          "icd10_code": "K40.90",
+          "icd10_display": "Unilateral inguinal hernia, without obstruction or gangrene"
+        }
+      ],
+      "procedures": [
+        {
+          "text": "Open inguinal hernioplasty with mesh",
+          "snomed_code": "236028004"
+        }
+      ],
+      "medications_on_discharge": [
+        "Inj. Cefuroxime 1.5g IV BD x 2 days",
+        "Tab. Diclofenac 50mg BD x 5 days",
+        "Cap. Omeprazole 20mg OD"
+      ],
+      "labs": [
+        {
+          "test": "Haemoglobin",
+          "result": "14.0",
+          "unit": "g/dL",
+          "ref_range": "13.0-17.0",
+          "flag": "NORMAL"
+        },
+        {
+          "test": "Random Blood Sugar",
+          "result": "104",
+          "unit": "mg/dL",
+          "ref_range": "70-140",
+          "flag": "NORMAL"
+        }
+      ],
+      "billing": {
+        "line_items": [
+          {
+            "description": "Room & Nursing Charges",
+            "detail": "3 days @ Rs.5500",
+            "amount": 16500,
+            "gst_percent": 0
+          },
+          {
+            "description": "Operation Theatre Charges",
+            "detail": "1",
+            "amount": 13300,
+            "gst_percent": 0
+          },
+          {
+            "description": "Surgeon Fee - Open inguinal hernioplasty with mesh",
+            "detail": "1",
+            "amount": 19000,
+            "gst_percent": 0
+          },
+          {
+            "description": "Anaesthesia Charges",
+            "detail": "1",
+            "amount": 5700,
+            "gst_percent": 0
+          },
+          {
+            "description": "Consultant Visits",
+            "detail": "4 visits",
+            "amount": 3200,
+            "gst_percent": 0
+          },
+          {
+            "description": "Investigations / Laboratory",
+            "detail": "as per annexure",
+            "amount": 3795,
+            "gst_percent": 0
+          },
+          {
+            "description": "Pharmacy & Consumables",
+            "detail": "as per annexure",
+            "amount": 10427,
+            "gst_percent": 12
+          },
+          {
+            "description": "Nursing Procedures",
+            "detail": "-",
+            "amount": 1768,
+            "gst_percent": 0
+          }
+        ],
+        "sub_total": 73690,
+        "gst_total": 1251,
+        "grand_total": 74941
+      },
+      "coverage": {
+        "insurer": "HDFC ERGO Health",
+        "policy_number": "HE-POL-38538251",
+        "tpa": "Direct (No TPA)",
+        "mode": "reimbursement"
+      }
+    }
+  },
+  {
+    "patient_id": "P005",
+    "documents": {
+      "discharge_summary": {
+        "file": "P005_discharge_summary.pdf",
+        "layout": "corporate"
+      },
+      "final_bill": {
+        "file": "P005_final_bill.pdf"
+      },
+      "lab_report": {
+        "file": "P005_lab_report.pdf"
+      }
+    },
+    "expected_extraction": {
+      "patient": {
+        "name": "Kavita Kumar",
+        "age": 30,
+        "gender": "Female",
+        "uhid": "LC479580",
+        "abha": "38-3266-9348-9085",
+        "phone": "9830514014",
+        "address": "24, Mayur Vihar, Delhi"
+      },
+      "encounter": {
+        "ip_number": "IP/2026/7916",
+        "admission_datetime": "2026-04-24T16:30:00",
+        "discharge_datetime": "2026-04-30T21:30:00",
+        "length_of_stay_days": 6,
+        "department": "Pulmonology",
+        "consultant": "Dr. Nidhi Bansal"
+      },
+      "diagnoses": [
+        {
+          "text": "Community acquired pneumonia",
+          "icd10_code": "J18.9",
+          "icd10_display": "Pneumonia, unspecified organism"
+        }
+      ],
+      "procedures": [],
+      "medications_on_discharge": [
+        "Inj. Piperacillin-Tazobactam 4.5g IV TDS",
+        "Tab. Azithromycin 500mg OD",
+        "Nebulisation with Salbutamol",
+        "O2 support as needed"
+      ],
+      "labs": [
+        {
+          "test": "WBC Count",
+          "result": "16.8",
+          "unit": "10^3/uL",
+          "ref_range": "4.0-11.0",
+          "flag": "HIGH"
+        },
+        {
+          "test": "CRP",
+          "result": "112",
+          "unit": "mg/L",
+          "ref_range": "<5",
+          "flag": "HIGH"
+        },
+        {
+          "test": "SpO2 (room air)",
+          "result": "91",
+          "unit": "%",
+          "ref_range": ">94",
+          "flag": "LOW"
+        }
+      ],
+      "billing": {
+        "line_items": [
+          {
+            "description": "Room & Nursing Charges",
+            "detail": "6 days @ Rs.3200",
+            "amount": 19200,
+            "gst_percent": 0
+          },
+          {
+            "description": "Consultant Visits",
+            "detail": "7 visits",
+            "amount": 5600,
+            "gst_percent": 0
+          },
+          {
+            "description": "Investigations / Laboratory",
+            "detail": "as per annexure",
+            "amount": 3186,
+            "gst_percent": 0
+          },
+          {
+            "description": "Pharmacy & Consumables",
+            "detail": "as per annexure",
+            "amount": 4794,
+            "gst_percent": 12
+          },
+          {
+            "description": "Nursing Procedures",
+            "detail": "-",
+            "amount": 2149,
+            "gst_percent": 0
+          }
+        ],
+        "sub_total": 34929,
+        "gst_total": 575,
+        "grand_total": 35504
+      },
+      "coverage": {
+        "insurer": "Care Health Insurance",
+        "policy_number": "CHI-94214382",
+        "tpa": "Medi Assist TPA",
+        "mode": "cashless"
+      }
+    }
+  },
+  {
+    "patient_id": "P006",
+    "documents": {
+      "discharge_summary": {
+        "file": "P006_discharge_summary.pdf",
+        "layout": "nursing_home"
+      },
+      "final_bill": {
+        "file": "P006_final_bill.pdf"
+      },
+      "lab_report": {
+        "file": "P006_lab_report.pdf"
+      }
+    },
+    "expected_extraction": {
+      "patient": {
+        "name": "Deepak Mehra",
+        "age": 60,
+        "gender": "Male",
+        "uhid": "LC216970",
+        "abha": null,
+        "phone": "9833978249",
+        "address": "1, Vaishali, Noida"
+      },
+      "encounter": {
+        "ip_number": "IP/2026/5889",
+        "admission_datetime": "2026-06-17T12:00:00",
+        "discharge_datetime": "2026-06-20T18:00:00",
+        "length_of_stay_days": 3,
+        "department": "General Surgery",
+        "consultant": "Dr. A. Venkatesh"
+      },
+      "diagnoses": [
+        {
+          "text": "Calculus of gallbladder with acute cholecystitis",
+          "icd10_code": "K80.00",
+          "icd10_display": "Calculus of gallbladder with acute cholecystitis without obstruction"
+        }
+      ],
+      "procedures": [
+        {
+          "text": "Laparoscopic cholecystectomy",
+          "snomed_code": "45595009"
+        }
+      ],
+      "medications_on_discharge": [
+        "Inj. Ceftriaxone 1g IV BD",
+        "Inj. Pantoprazole 40mg IV OD",
+        "Tab. Drotaverine 40mg TDS SOS"
+      ],
+      "labs": [
+        {
+          "test": "Total Bilirubin",
+          "result": "1.4",
+          "unit": "mg/dL",
+          "ref_range": "0.3-1.2",
+          "flag": "HIGH"
+        },
+        {
+          "test": "SGPT (ALT)",
+          "result": "68",
+          "unit": "U/L",
+          "ref_range": "7-56",
+          "flag": "HIGH"
+        },
+        {
+          "test": "WBC Count",
+          "result": "13.9",
+          "unit": "10^3/uL",
+          "ref_range": "4.0-11.0",
+          "flag": "HIGH"
+        }
+      ],
+      "billing": {
+        "line_items": [
+          {
+            "description": "Room & Nursing Charges",
+            "detail": "3 days @ Rs.5500",
+            "amount": 16500,
+            "gst_percent": 0
+          },
+          {
+            "description": "Operation Theatre Charges",
+            "detail": "1",
+            "amount": 18200,
+            "gst_percent": 0
+          },
+          {
+            "description": "Surgeon Fee - Laparoscopic cholecystectomy",
+            "detail": "1",
+            "amount": 26000,
+            "gst_percent": 0
+          },
+          {
+            "description": "Anaesthesia Charges",
+            "detail": "1",
+            "amount": 7800,
+            "gst_percent": 0
+          },
+          {
+            "description": "Consultant Visits",
+            "detail": "4 visits",
+            "amount": 3200,
+            "gst_percent": 0
+          },
+          {
+            "description": "Investigations / Laboratory",
+            "detail": "as per annexure",
+            "amount": 4712,
+            "gst_percent": 0
+          },
+          {
+            "description": "Pharmacy & Consumables",
+            "detail": "as per annexure",
+            "amount": 11076,
+            "gst_percent": 12
+          },
+          {
+            "description": "Nursing Procedures",
+            "detail": "-",
+            "amount": 910,
+            "gst_percent": 0
+          }
+        ],
+        "sub_total": 88398,
+        "gst_total": 1329,
+        "grand_total": 89727
+      },
+      "coverage": {
+        "insurer": "National Insurance Co. Ltd.",
+        "policy_number": "NIC-78139880",
+        "tpa": "MDIndia Health Insurance TPA",
+        "mode": "cashless"
+      }
+    }
+  },
+  {
+    "patient_id": "P007",
+    "documents": {
+      "discharge_summary": {
+        "file": "P007_discharge_summary.pdf",
+        "layout": "corporate"
+      },
+      "final_bill": {
+        "file": "P007_final_bill.pdf"
+      },
+      "lab_report": {
+        "file": "P007_lab_report.pdf"
+      }
+    },
+    "expected_extraction": {
+      "patient": {
+        "name": "Suresh Yadav",
+        "age": 70,
+        "gender": "Male",
+        "uhid": "LC217301",
+        "abha": "56-6038-4923-1949",
+        "phone": "9821496211",
+        "address": "62, Preet Vihar, Delhi"
+      },
+      "encounter": {
+        "ip_number": "IP/2026/9727",
+        "admission_datetime": "2026-04-18T20:00:00",
+        "discharge_datetime": "2026-04-22T21:00:00",
+        "length_of_stay_days": 4,
+        "department": "General Surgery",
+        "consultant": "Dr. R. K. Malhotra"
+      },
+      "diagnoses": [
+        {
+          "text": "Acute appendicitis",
+          "icd10_code": "K35.80",
+          "icd10_display": "Unspecified acute appendicitis"
+        }
+      ],
+      "procedures": [
+        {
+          "text": "Laparoscopic appendectomy",
+          "snomed_code": "174041007"
+        }
+      ],
+      "medications_on_discharge": [
+        "Inj. Ceftriaxone 1g IV BD x 3 days",
+        "Tab. Metronidazole 400mg TDS x 5 days",
+        "Tab. Paracetamol 650mg SOS"
+      ],
+      "labs": [
+        {
+          "test": "WBC Count",
+          "result": "14.2",
+          "unit": "10^3/uL",
+          "ref_range": "4.0-11.0",
+          "flag": "HIGH"
+        },
+        {
+          "test": "CRP",
+          "result": "48",
+          "unit": "mg/L",
+          "ref_range": "<5",
+          "flag": "HIGH"
+        },
+        {
+          "test": "Haemoglobin",
+          "result": "13.1",
+          "unit": "g/dL",
+          "ref_range": "13.0-17.0",
+          "flag": "NORMAL"
+        }
+      ],
+      "billing": {
+        "line_items": [
+          {
+            "description": "Room & Nursing Charges",
+            "detail": "4 days @ Rs.2500",
+            "amount": 10000,
+            "gst_percent": 0
+          },
+          {
+            "description": "Operation Theatre Charges",
+            "detail": "1",
+            "amount": 15749,
+            "gst_percent": 0
+          },
+          {
+            "description": "Surgeon Fee - Laparoscopic appendectomy",
+            "detail": "1",
+            "amount": 22500,
+            "gst_percent": 0
+          },
+          {
+            "description": "Anaesthesia Charges",
+            "detail": "1",
+            "amount": 6750,
+            "gst_percent": 0
+          },
+          {
+            "description": "Consultant Visits",
+            "detail": "5 visits",
+            "amount": 4000,
+            "gst_percent": 0
+          },
+          {
+            "description": "Investigations / Laboratory",
+            "detail": "as per annexure",
+            "amount": 3048,
+            "gst_percent": 0
+          },
+          {
+            "description": "Pharmacy & Consumables",
+            "detail": "as per annexure",
+            "amount": 7298,
+            "gst_percent": 12
+          },
+          {
+            "description": "Nursing Procedures",
+            "detail": "-",
+            "amount": 1494,
+            "gst_percent": 0
+          }
+        ],
+        "sub_total": 70839,
+        "gst_total": 875,
+        "grand_total": 71714
+      },
+      "coverage": {
+        "insurer": "Care Health Insurance",
+        "policy_number": "CHI-75228535",
+        "tpa": "MDIndia Health Insurance TPA",
+        "mode": "cashless"
+      }
+    }
+  },
+  {
+    "patient_id": "P008",
+    "documents": {
+      "discharge_summary": {
+        "file": "P008_discharge_summary.pdf",
+        "layout": "nursing_home"
+      },
+      "final_bill": {
+        "file": "P008_final_bill.pdf"
+      },
+      "lab_report": {
+        "file": "P008_lab_report.pdf"
+      }
+    },
+    "expected_extraction": {
+      "patient": {
+        "name": "Suresh Agarwal",
+        "age": 57,
+        "gender": "Male",
+        "uhid": "LC518373",
+        "abha": null,
+        "phone": "9840158366",
+        "address": "116, Mayur Vihar, Delhi"
+      },
+      "encounter": {
+        "ip_number": "IP/2026/1344",
+        "admission_datetime": "2026-04-09T16:45:00",
+        "discharge_datetime": "2026-04-12T20:45:00",
+        "length_of_stay_days": 3,
+        "department": "Internal Medicine",
+        "consultant": "Dr. A. Venkatesh"
+      },
+      "diagnoses": [
+        {
+          "text": "Type 2 diabetes mellitus with hyperglycemia",
+          "icd10_code": "E11.65",
+          "icd10_display": "Type 2 diabetes mellitus with hyperglycemia"
+        }
+      ],
+      "procedures": [],
+      "medications_on_discharge": [
+        "Inj. Human Insulin (Actrapid) per sliding scale",
+        "Tab. Metformin 500mg BD",
+        "Tab. Glimepiride 2mg OD"
+      ],
+      "labs": [
+        {
+          "test": "Fasting Blood Sugar",
+          "result": "246",
+          "unit": "mg/dL",
+          "ref_range": "70-100",
+          "flag": "HIGH"
+        },
+        {
+          "test": "HbA1c",
+          "result": "10.4",
+          "unit": "%",
+          "ref_range": "<5.7",
+          "flag": "HIGH"
+        },
+        {
+          "test": "Serum Creatinine",
+          "result": "1.1",
+          "unit": "mg/dL",
+          "ref_range": "0.7-1.3",
+          "flag": "NORMAL"
+        }
+      ],
+      "billing": {
+        "line_items": [
+          {
+            "description": "Room & Nursing Charges",
+            "detail": "3 days @ Rs.3200",
+            "amount": 9600,
+            "gst_percent": 0
+          },
+          {
+            "description": "Consultant Visits",
+            "detail": "4 visits",
+            "amount": 3200,
+            "gst_percent": 0
+          },
+          {
+            "description": "Investigations / Laboratory",
+            "detail": "as per annexure",
+            "amount": 4996,
+            "gst_percent": 0
+          },
+          {
+            "description": "Pharmacy & Consumables",
+            "detail": "as per annexure",
+            "amount": 7675,
+            "gst_percent": 12
+          },
+          {
+            "description": "Nursing Procedures",
+            "detail": "-",
+            "amount": 1087,
+            "gst_percent": 0
+          }
+        ],
+        "sub_total": 26558,
+        "gst_total": 921,
+        "grand_total": 27479
+      },
+      "coverage": {
+        "insurer": "HDFC ERGO Health",
+        "policy_number": "HE-POL-18593410",
+        "tpa": "Vidal Health TPA",
+        "mode": "cashless"
+      }
+    }
+  }
+]
