@@ -1,0 +1,131 @@
+# ClaimBridge — local dev stack (Phase A1).
+#
+# Brings up the four backing services the scalable architecture needs, plus the
+# FastAPI api, entirely on your machine. No AWS, no cost.
+#
+#   Postgres  — will hold claim/validation/user state   (replaces app_data/*.json)
+#   Redis     — Celery broker/result backend + cache     (added in A4)
+#   MinIO     — S3-compatible object store for documents  (replaces app_data/uploads)
+#   api       — the existing FastAPI backend (async-ified in A5)
+#
+# Run:   docker compose --env-file .env.docker up --build
+# Stop:  docker compose down            (add -v to also wipe the data volumes)
+#
+# The --env-file flag makes Compose read .env.docker (proper KEY=value dotenv)
+# instead of the repo's Windows-batch .env (which uses `set VAR=...`).
+
+name: claimbridge
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-claimbridge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-claimbridge}
+      POSTGRES_DB: ${POSTGRES_DB:-claimbridge}
+    ports:
+      - "5432:5432"                # exposed so you can inspect with psql/DBeaver
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-claimbridge}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-minioadmin}
+    ports:
+      - "9000:9000"                # S3 API
+      - "9001:9001"                # web console — http://localhost:9001
+    volumes:
+      - miniodata:/data
+
+  # One-shot job: waits for MinIO, creates the bucket, then exits. Makes the
+  # object store usable the moment `up` finishes.
+  minio-init:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 $${S3_ACCESS_KEY:-minioadmin} $${S3_SECRET_KEY:-minioadmin}; do
+        echo 'waiting for minio...'; sleep 1;
+      done;
+      mc mb --ignore-existing local/$${S3_BUCKET:-claimbridge};
+      echo 'bucket ready';
+      "
+
+  api:
+    build: ./extraction
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    environment:
+      PYTHONPATH: /app             # so local modules import cleanly everywhere
+      # LLM (from .env.docker) — the engine still calls the provider directly.
+      LLM_PROVIDER: ${LLM_PROVIDER:-gemini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # Infra connection strings the app will start using in A2–A4.
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-claimbridge}:${POSTGRES_PASSWORD:-claimbridge}@postgres:5432/${POSTGRES_DB:-claimbridge}
+      REDIS_URL: redis://redis:6379/0
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_BUCKET: ${S3_BUCKET:-claimbridge}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-minioadmin}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-minioadmin}
+      S3_REGION: ${S3_REGION:-us-east-1}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./extraction:/app          # live code reload in dev (uvicorn --reload)
+    # Apply DB migrations, then serve. `alembic upgrade head` is idempotent.
+    command: sh -c "alembic upgrade head && uvicorn api:app --host 0.0.0.0 --port 8000 --reload"
+
+  # Celery worker — runs the extract→code→validate pipeline off the API process.
+  worker:
+    build: ./extraction
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    environment:
+      PYTHONPATH: /app             # so the worker imports local modules cleanly
+      LLM_PROVIDER: ${LLM_PROVIDER:-gemini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-claimbridge}:${POSTGRES_PASSWORD:-claimbridge}@postgres:5432/${POSTGRES_DB:-claimbridge}
+      REDIS_URL: redis://redis:6379/0
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_BUCKET: ${S3_BUCKET:-claimbridge}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-minioadmin}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-minioadmin}
+      S3_REGION: ${S3_REGION:-us-east-1}
+    volumes:
+      - ./extraction:/app
+    # prefork pool on Linux — CPU parallelism for scan rendering. Tune -c to vCPUs.
+    # (Run the worker in the container, NOT on the Windows host — prefork is flaky there.)
+    command: celery -A tasks.celery_app worker --loglevel=info -c 4
+
+volumes:
+  pgdata:
+  miniodata:

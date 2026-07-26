@@ -1,0 +1,9 @@
+# Keep the build context small and the image clean.
+__pycache__/
+*.pyc
+app_data/          # local filesystem state — replaced by Postgres + S3 in Phase A
+claims_out*/
+fhir_out*/
+logs/
+.env
+.pytest_cache/

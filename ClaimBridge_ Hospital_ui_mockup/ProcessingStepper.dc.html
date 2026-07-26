@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@keyframes cbPulse{0%{box-shadow:0 0 0 0 rgba(14,124,102,.35)}70%{box-shadow:0 0 0 8px rgba(14,124,102,0)}100%{box-shadow:0 0 0 0 rgba(14,124,102,0)}}
+@keyframes cbFade{from{opacity:0;transform:translateY(2px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important} }
+</style>
+</helmet>
+<div style="background:#FFFFFF;border:1px solid #DFE3E7;padding:32px">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+    <div>
+      <div style="font-size:13px;font-weight:700;letter-spacing:.04em;color:#5b6b7c;margin-bottom:4px">PROCESSING CLAIM</div>
+      <div style="font-family:'IBM Plex Mono';font-size:15px;font-weight:600">CB-2291052</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <div onClick="{{runNormal}}" style="font-size:12px;color:#5b6b7c;border:1px solid #DFE3E7;padding:6px 10px;cursor:pointer">▶ Simulate run</div>
+      <div onClick="{{runFailure}}" style="font-size:12px;color:#5b6b7c;border:1px solid #DFE3E7;padding:6px 10px;cursor:pointer">▶ Simulate failure</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column">
+    <sc-for list="{{steps}}" as="step" hint-placeholder-count="5">
+      <div style="display:flex;gap:18px;opacity:{{step.rowOpacity}};transform:{{step.rowTransform}};transition:opacity 350ms ease, transform 350ms ease">
+        <div style="display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0">
+          <div style="width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:{{step.iconBg}};border:2px solid {{step.iconBorder}};animation:{{step.pulseAnim}}">
+            <sc-if value="{{step.showCheck}}" hint-placeholder-val="{{false}}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg>
+            </sc-if>
+            <sc-if value="{{step.showX}}" hint-placeholder-val="{{false}}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </sc-if>
+            <sc-if value="{{step.showBang}}" hint-placeholder-val="{{false}}">
+              <span style="color:#FFFFFF;font-family:'IBM Plex Mono';font-weight:700;font-size:13px">!</span>
+            </sc-if>
+            <sc-if value="{{step.showDot}}" hint-placeholder-val="{{false}}">
+              <span style="width:8px;height:8px;border-radius:50%;background:{{step.dotColor}};display:inline-block"></span>
+            </sc-if>
+          </div>
+          <div style="width:2px;flex:1;min-height:36px;background:#EDEFF1;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;background:{{step.lineColor}};height:{{step.linePct}};transition:height 900ms ease"></div>
+          </div>
+        </div>
+        <div style="padding-bottom:28px;flex:1;min-width:0">
+          <div style="font-family:'Archivo';font-weight:700;font-size:16px;color:{{step.labelColor}};margin-bottom:5px">{{step.label}}</div>
+          <div style="font-family:'IBM Plex Mono';font-size:13px;color:{{step.detailColor}};animation:cbFade 300ms ease">{{step.detail}}</div>
+          <sc-if value="{{step.showRetry}}" hint-placeholder-val="{{false}}">
+            <div onClick="{{runNormal}}" style="display:inline-block;margin-top:12px;border:1px solid #B3402F;color:#B3402F;font-weight:700;font-size:13px;padding:9px 16px;cursor:pointer">Retry</div>
+          </sc-if>
+          <sc-if value="{{step.showCta}}" hint-placeholder-val="{{false}}">
+            <a href="./Review.dc.html" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:#0E7C66;color:#F7F9FA;font-weight:700;font-size:14px;padding:11px 20px">
+              Open review
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:560,&quot;height&quot;:640}}">
+class Component extends DCLogic {
+  state = { mode: 'idle', tick: 0, runId: 0 };
+
+  defs = [
+    { label: 'Reading documents', activeText: 'Reading documents…', doneText: '3 files · 2 typed, 1 scanned' },
+    { label: 'Extracting fields', activeText: 'Extracting fields…', midText: 'patient, dates found…', doneText: 'Rahul Kumar, UHID LC133326, admission dates, 8 bill items found' },
+    { label: 'Assigning medical codes', activeText: 'Assigning medical codes…', midText: 'ICD-10: K35.80…', mid2Text: 'ICD-10: K35.80 (97%)…', doneText: 'ICD-10: K35.80 (97%) · SNOMED: 174041007' },
+    { label: 'Running validation', activeText: 'Running validation…', midText: '12 of 20 checks complete…', attentionText: '20 checks · 2 need your review' },
+    { label: 'Ready for review', activeText: 'Finalizing…', doneText: 'Draft FHIR bundle assembled' },
+  ];
+
+  componentDidMount() { this.start('normal'); }
+  componentWillUnmount() { this.clear(); }
+  clear() { (this.timers || []).forEach(t => clearTimeout(t)); this.timers = []; }
+
+  typeText(i, text, runId) {
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      this.setState(s => { const details = [...s.details]; details[i] = text; return { details }; });
+      return;
+    }
+    let pos = 0;
+    const chunk = Math.max(1, Math.round(text.length / 22));
+    const step = () => {
+      if (this.state.runId !== runId) return;
+      pos = Math.min(text.length, pos + chunk);
+      this.setState(s => { const details = [...s.details]; details[i] = text.slice(0, pos); return { details }; });
+      if (pos < text.length) this.timers.push(setTimeout(step, 30));
+    };
+    step();
+  }
+
+  start(mode) {
+    this.clear();
+    const runId = this.state.runId + 1;
+    this.timers = [];
+    this.setState({ mode: 'running', runId, statuses: [0, 0, 0, 0, 0], details: this.defs.map(d => d.activeText), reasons: {} });
+    const at = (ms, fn) => this.timers.push(setTimeout(() => { if (this.state.runId === runId) fn(); }, ms));
+    const setStep = (i, status, detail) => this.setState(s => {
+      const statuses = [...s.statuses]; statuses[i] = status;
+      const details = [...s.details]; details[i] = detail;
+      return { statuses, details };
+    });
+    const setStatus = (i, status) => this.setState(s => { const statuses = [...s.statuses]; statuses[i] = status; return { statuses }; });
+
+    at(0, () => setStep(0, 1, this.defs[0].activeText));
+    at(900, () => this.typeText(0, this.defs[0].doneText, runId));
+    at(2400, () => { setStatus(0, 2); setStep(1, 1, this.defs[1].activeText); });
+    at(3400, () => setStep(1, 1, this.defs[1].midText));
+    at(5000, () => this.typeText(1, this.defs[1].doneText, runId));
+    at(6400, () => { setStatus(1, 2); setStep(2, 1, this.defs[2].activeText); });
+
+    if (mode === 'failure') {
+      at(7600, () => setStep(2, 1, this.defs[2].midText));
+      at(9200, () => setStep(2, 3, 'OCR confidence too low to verify ICD-10 against SNOMED reference set.'));
+      return;
+    }
+
+    at(7600, () => setStep(2, 1, this.defs[2].midText));
+    at(9200, () => setStep(2, 1, this.defs[2].mid2Text));
+    at(10800, () => this.typeText(2, this.defs[2].doneText, runId));
+    at(12600, () => { setStatus(2, 2); setStep(3, 1, this.defs[3].activeText); });
+    at(13600, () => setStep(3, 1, this.defs[3].midText));
+    at(15600, () => { setStatus(3, 4); this.setState(s => { const details = [...s.details]; details[3] = this.defs[3].attentionText; return { details }; }); setStep(4, 1, this.defs[4].activeText); });
+    at(17600, () => setStatus(4, 2));
+  }
+
+  renderVals() {
+    const statuses = this.state.statuses || [0, 0, 0, 0, 0];
+    const details = this.state.details || this.defs.map(d => d.activeText);
+    const colors = { muted: '#C7CED4', teal: '#0E7C66', amber: '#C67B1F', red: '#B3402F' };
+
+    const steps = this.defs.map((d, i) => {
+      const st = statuses[i]; // 0 pending 1 active 2 done 3 failed 4 attention
+      let iconBg = '#FFFFFF', iconBorder = colors.muted, labelColor = '#8a97a4', detailColor = '#8a97a4';
+      let showCheck = false, showX = false, showBang = false, showDot = false, dotColor = colors.muted;
+      let pulseAnim = 'none', lineColor = '#EDEFF1', linePct = '0%', showRetry = false, showCta = false;
+
+      if (st === 0) { showDot = true; dotColor = '#C7CED4'; }
+      if (st === 1) { iconBorder = colors.teal; showDot = true; dotColor = colors.teal; pulseAnim = 'cbPulse 1.6s ease-in-out infinite'; labelColor = '#14273D'; detailColor = '#14273D'; }
+      if (st === 2) { iconBg = colors.teal; iconBorder = colors.teal; showCheck = true; labelColor = '#14273D'; detailColor = '#5b6b7c'; lineColor = colors.teal; linePct = '100%'; }
+      if (st === 3) { iconBg = colors.red; iconBorder = colors.red; showX = true; labelColor = '#B3402F'; detailColor = '#B3402F'; showRetry = true; }
+      if (st === 4) { iconBg = colors.amber; iconBorder = colors.amber; showBang = true; labelColor = '#14273D'; detailColor = '#C67B1F'; lineColor = colors.amber; linePct = '100%'; }
+      if (i === 4 && st === 2) { showCta = true; }
+
+      // grey out steps after a failure
+      const failedBefore = statuses.slice(0, i).some(s => s === 3);
+      if (failedBefore) { labelColor = '#C7CED4'; detailColor = '#C7CED4'; iconBorder = '#EDEFF1'; }
+
+      const rowOpacity = failedBefore ? 0.4 : (st === 2 ? 0.62 : 1);
+      const rowTransform = st === 2 ? 'translateY(-1px)' : 'translateY(0)';
+
+      return {
+        label: d.label, detail: failedBefore ? '' : details[i],
+        iconBg, iconBorder, labelColor, detailColor, showCheck, showX, showBang, showDot, dotColor,
+        pulseAnim, lineColor, linePct, showRetry, showCta, rowOpacity, rowTransform,
+      };
+    });
+
+    return {
+      steps,
+      runNormal: () => this.start('normal'),
+      runFailure: () => this.start('failure'),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

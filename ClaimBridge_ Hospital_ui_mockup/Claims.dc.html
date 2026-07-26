@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F7F9FA;color:#14273D;font-family:'Public Sans',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#0E7C66}
+a:hover{color:#0a5f4f}
+summary{list-style:none;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+.cb-row-cells{transition:background 150ms ease}
+.cb-row-cells:hover{background:#F2F4F5}
+.cb-chip{cursor:pointer}
+@keyframes cbFadeRow{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){ .cb-row-cells{animation:none !important;opacity:1 !important} }
+</style>
+</helmet>
+<div style="min-height:100vh">
+
+<div style="display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 40px;background:#FFFFFF;border-bottom:1px solid #DFE3E7;position:sticky;top:0;z-index:20">
+  <div style="display:flex;align-items:center;gap:40px">
+    <a href="./Landing.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#14273D">
+      <div style="width:32px;height:32px;background:#14273D;display:flex;align-items:center;justify-content:center">
+        <span style="font-family:'IBM Plex Mono';font-weight:600;color:#F7F9FA;font-size:13px">CB</span>
+      </div>
+      <span style="font-family:'Archivo';font-weight:800;font-size:19px">ClaimBridge</span>
+    </a>
+    <div style="display:flex;gap:28px">
+      <a href="./Dashboard.dc.html" style="font-weight:600;font-size:15px;color:#5b6b7c;text-decoration:none;padding:26px 0 22px;border-bottom:2px solid transparent">Dashboard</a>
+      <a href="./Upload.dc.html" style="font-weight:600;font-size:15px;color:#5b6b7c;text-decoration:none;padding:26px 0 22px;border-bottom:2px solid transparent">Upload</a>
+      <a href="./Claims.dc.html" style="font-weight:700;font-size:15px;color:#14273D;text-decoration:none;padding:26px 0 22px;border-bottom:2px solid #0E7C66">Claims</a>
+      <a href="./Reports.dc.html" style="font-weight:600;font-size:15px;color:#5b6b7c;text-decoration:none;padding:26px 0 22px;border-bottom:2px solid transparent">Reports</a>
+    </div>
+  </div>
+  <details style="position:relative">
+    <summary style="display:flex;align-items:center;gap:10px;outline:none">
+      <div style="text-align:right">
+        <div style="font-weight:600;font-size:14px">Shree Krishna Nursing Home</div>
+        <div style="font-size:12px;color:#5b6b7c">Laxmi Nagar · Claims Desk</div>
+      </div>
+      <div style="width:36px;height:36px;border-radius:50%;background:#14273D;color:#F7F9FA;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';font-size:13px;font-weight:600;flex-shrink:0">SK</div>
+    </summary>
+    <div style="position:absolute;right:0;top:48px;background:#FFFFFF;border:1px solid #DFE3E7;box-shadow:0 4px 16px rgba(20,39,61,.1);width:200px;padding:6px;z-index:30">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;color:#8a97a4;font-size:14px">
+        <span>Settings</span><span style="font-family:'IBM Plex Mono';font-size:10px;background:#EDEFF1;color:#8a97a4;padding:2px 6px">SOON</span>
+      </div>
+      <div style="height:1px;background:#EDEFF1;margin:4px 0"></div>
+      <a href="./Login.dc.html" style="display:block;padding:10px 12px;color:#14273D;font-size:14px;text-decoration:none">Sign out</a>
+    </div>
+  </details>
+</div>
+
+<div style="max-width:1360px;margin:0 auto;padding:48px 40px 96px">
+
+  <h1 style="font-family:'Archivo';font-weight:800;font-size:30px;margin:0 0 32px">Claims</h1>
+
+  <div style="display:flex;align-items:center;gap:20px;margin-bottom:24px">
+    <div style="display:flex;align-items:center;gap:8px;border:1px solid #DFE3E7;padding:11px 16px;flex:1;max-width:360px;background:#FFFFFF">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a97a4" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <span style="font-size:14px;color:#8a97a4">Search patient, UHID or claim ID…</span>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap">
+    <sc-for list="{{chips}}" as="chip" hint-placeholder-count="6">
+      <div class="cb-chip" style="padding:9px 16px;border:1px solid {{chip.active}};background:{{chip.bg}};color:{{chip.color}};font-size:14px;font-weight:600">{{chip.label}}</div>
+    </sc-for>
+  </div>
+
+  <div style="background:#FFFFFF;border-top:1px solid #DFE3E7">
+    <div style="display:grid;grid-template-columns:1.1fr 1.6fr 1.6fr 1.2fr 1fr 1.1fr 1fr;column-gap:16px;padding:16px 20px;border-bottom:1px solid #DFE3E7">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c;display:flex;align-items:center;gap:4px">CLAIM ID <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C7CED4" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c">PATIENT</div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c">DIAGNOSIS</div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c">INSURER</div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:4px">AMOUNT <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C7CED4" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c">STATUS</div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c">UPDATED</div>
+    </div>
+
+    <sc-for list="{{rows}}" as="c" hint-placeholder-count="10">
+      <a href="./Review.dc.html" class="cb-row-cells" style="text-decoration:none;color:inherit;display:grid;grid-template-columns:1.1fr 1.6fr 1.6fr 1.2fr 1fr 1.1fr 1fr;column-gap:16px;align-items:center;padding:18px 20px;border-bottom:1px solid #EDEFF1;animation:cbFadeRow 250ms ease-out both;animation-delay:{{c.delay}}">
+        <div style="font-family:'IBM Plex Mono';font-size:13px">{{c.id}}</div>
+        <div>
+          <div style="font-size:14px">{{c.patient}}</div>
+          <div style="font-family:'IBM Plex Mono';font-size:12px;color:#8a97a4;margin-top:2px">{{c.uhid}}</div>
+        </div>
+        <div style="font-size:14px;color:#3d4c5e">{{c.diagnosis}}</div>
+        <div style="font-size:14px;color:#5b6b7c">{{c.insurer}}</div>
+        <div style="font-family:'IBM Plex Mono';font-size:13px;text-align:right">{{c.amount}}</div>
+        <div>
+          <span style="background:{{c.statusBg}};color:{{c.statusColor}};font-family:'IBM Plex Mono';font-weight:600;font-size:11px;padding:4px 9px;letter-spacing:.03em">{{c.status}}</span>
+          <sc-if value="{{c.note}}" hint-placeholder-val="{{false}}">
+            <div style="font-size:11px;color:#8a97a4;margin-top:5px">{{c.note}}</div>
+          </sc-if>
+        </div>
+        <div style="font-family:'IBM Plex Mono';font-size:13px;color:#5b6b7c">{{c.date}}</div>
+      </a>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px">
+    <div style="font-size:13px;color:#5b6b7c">Showing 1–10 of 341 claims</div>
+    <div style="display:flex;gap:8px">
+      <div style="width:34px;height:34px;border:1px solid #DFE3E7;display:flex;align-items:center;justify-content:center;color:#C7CED4">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+      </div>
+      <div style="width:34px;height:34px;border:1px solid #DFE3E7;display:flex;align-items:center;justify-content:center;color:#14273D">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  chipDefs = ['All', 'Needs review', 'Submitted to NHCX', 'Insurer query', 'Paid', 'Rejected'];
+
+  rowsData = [
+    { id: 'CB-2291048', patient: 'Rahul Kumar', uhid: 'LC133326', diagnosis: 'Acute appendicitis · K35.80', insurer: 'Star Health', amount: '₹74,323', status: 'REVIEW', date: '21 Jul' },
+    { id: 'CB-2291039', patient: 'Ramesh Iyer', uhid: 'LC118820', diagnosis: 'Inguinal hernia · K40.90', insurer: 'ICICI Lombard', amount: '₹62,900', status: 'SUBMITTED', date: '21 Jul' },
+    { id: 'CB-2291052', patient: 'Anita Verma', uhid: 'LC144502', diagnosis: 'Cholelithiasis · K80.20', insurer: 'HDFC Ergo', amount: '₹1,08,900', status: 'QUERY', date: '21 Jul', note: 'Insurer requesting itemized bill' },
+    { id: 'CB-2291022', patient: 'Fatima Sheikh', uhid: 'LC109981', diagnosis: 'Cataract, right eye · H25.11', insurer: 'Star Health', amount: '₹2,41,050', status: 'PAID', date: '20 Jul' },
+    { id: 'CB-2291017', patient: 'Deepak Kulkarni', uhid: 'LC176230', diagnosis: 'Femur fracture · S72.90', insurer: 'Bajaj Allianz', amount: '₹38,400', status: 'REJECTED', date: '20 Jul', note: 'Appeal drafted' },
+    { id: 'CB-2291005', patient: 'Meena Sharma', uhid: 'LC207175', diagnosis: 'Type 2 diabetes · E11.65', insurer: 'HDFC Ergo', amount: '₹30,771', status: 'PAID', date: '19 Jul' },
+    { id: 'CB-2290994', patient: 'Arjun Reddy', uhid: 'LC098215', diagnosis: 'Appendectomy · K35.80', insurer: 'ICICI Lombard', amount: '₹1,12,300', status: 'SUBMITTED', date: '19 Jul' },
+    { id: 'CB-2290981', patient: 'Sunita Rao', uhid: 'LC165590', diagnosis: 'Gallbladder removal · K80.00', insurer: 'Star Health', amount: '₹74,800', status: 'REVIEW', date: '18 Jul' },
+    { id: 'CB-2290967', patient: 'Mohammed Aslam', uhid: 'LC132870', diagnosis: 'Coronary angioplasty · I25.10', insurer: 'HDFC Ergo', amount: '₹1,53,700', status: 'PAID', date: '18 Jul' },
+    { id: 'CB-2290930', patient: 'Suresh Pillai', uhid: 'LC154012', diagnosis: 'Pneumonia · J18.9', insurer: 'Bajaj Allianz', amount: '₹22,150', status: 'REJECTED', date: '17 Jul', note: 'Appeal drafted' },
+  ];
+
+  statusStyle(status) {
+    const map = {
+      REVIEW: { bg: '#FBEEDD', color: '#C67B1F', label: 'NEEDS REVIEW' },
+      QUERY: { bg: '#FBEEDD', color: '#C67B1F', label: 'INSURER QUERY' },
+      SUBMITTED: { bg: '#EAF0FF', color: '#39537A', label: 'SUBMITTED' },
+      PAID: { bg: '#E4F3EF', color: '#0E7C66', label: 'PAID' },
+      REJECTED: { bg: '#FBEAE6', color: '#B3402F', label: 'REJECTED' },
+    };
+    return map[status] || { bg: '#EDEFF1', color: '#5b6b7c', label: status };
+  }
+
+  renderVals() {
+    const rows = this.rowsData.map((r, i) => { const s = this.statusStyle(r.status); return { ...r, status: s.label, statusBg: s.bg, statusColor: s.color, delay: (i * 25) + 'ms' }; });
+    const chips = this.chipDefs.map((label, i) => ({
+      label, active: i === 0 ? '#14273D' : '#DFE3E7',
+      bg: i === 0 ? '#14273D' : '#FFFFFF', color: i === 0 ? '#F7F9FA' : '#5b6b7c',
+    }));
+    return { rows, chips };
+  }
+}
+
+</script>
+</body>
+</html>

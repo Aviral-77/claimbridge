@@ -1,69 +1,97 @@
 import React from 'react'
-import { api } from '../api.js'
+import { inr, statusMeta } from '../format.js'
 
-const inr = (n) => (n == null ? '—' : `₹${Number(n).toLocaleString('en-IN')}`)
+/* Dashboard — overview from Dashboard.dc.html. Metric tiles and a
+   "needs your attention" table, both computed from the REAL /api/claims
+   feed (no fabricated business KPIs — operational counts only). */
 
-export default function Dashboard({ claims, onOpen }) {
-  const passing = claims.filter((c) => c.status === 'PASS' || c.status === 'APPROVED')
+const Chevron = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="m9 18 6-6-6-6" />
+  </svg>
+)
+
+const GRID = { gridTemplateColumns: '1.1fr 1.6fr 1fr 1fr 1.2fr 40px' }
+
+export default function Dashboard({ claims, onOpen, onViewAll }) {
   const review = claims.filter((c) => c.status === 'REVIEW')
   const approved = claims.filter((c) => c.status === 'APPROVED')
+  const failed = claims.filter((c) => c.status === 'FAIL')
   const total = claims.reduce((s, c) => s + (c.amount || 0), 0)
 
-  return (
-    <>
-      <h1>Claims</h1>
-      <p className="sub">Every cashless claim, from upload to settlement</p>
+  // Rows that need a human: flagged for review or failing validation.
+  const attention = [...review, ...failed]
 
-      <div className="stats">
-        <div className="card stat"><div className="k">Claims</div>
-          <div className="v">{claims.length}</div></div>
-        <div className="card stat"><div className="k">Need your review</div>
-          <div className={`v ${review.length ? 'amber' : ''}`}>{review.length}</div></div>
-        <div className="card stat"><div className="k">Approved (FHIR built)</div>
-          <div className="v">{approved.length}</div></div>
-        <div className="card stat"><div className="k">Total claim value</div>
-          <div className="v mono" style={{ fontSize: 21 }}>{inr(total)}</div></div>
+  return (
+    <div className="page">
+      <div style={{ marginBottom: 40 }}>
+        <h1 className="page-title">Dashboard</h1>
+        <div className="page-sub">Every cashless claim, from upload to settlement</div>
       </div>
 
-      <div className="card">
+      <div className="metrics">
+        <div className="metric">
+          <div className="label">Claims in console</div>
+          <div className="value">{claims.length}</div>
+        </div>
+        <div className="metric">
+          <div className="label">Awaiting review</div>
+          <div className={`value ${review.length ? 'amber' : ''}`}>{review.length}</div>
+        </div>
+        <div className="metric">
+          <div className="label">Approved · FHIR built</div>
+          <div className="value teal">{approved.length}</div>
+        </div>
+        <div className="metric">
+          <div className="label">Total claim value</div>
+          <div className="value" style={{ fontSize: 26 }}>{inr(total)}</div>
+        </div>
+      </div>
+
+      <div className="attention-head">
+        <h2 className="section-title">Needs your attention</h2>
+        <button className="linkish" onClick={onViewAll}>View all claims →</button>
+      </div>
+
+      <div className="dtable">
+        <div className="dtable-head" style={GRID}>
+          <div className="col-h">CLAIM ID</div>
+          <div className="col-h">PATIENT</div>
+          <div className="col-h">FLAGS</div>
+          <div className="col-h t-right">AMOUNT</div>
+          <div className="col-h">STATUS</div>
+          <div />
+        </div>
+
         {claims.length === 0 ? (
           <div className="empty">
             <div className="big">No claims yet</div>
             Upload a patient's documents to process your first claim.
           </div>
-        ) : (
-          <table className="claims-table">
-            <thead>
-              <tr><th>Claim</th><th>Patient</th><th className="amt">Amount</th>
-                <th>Status</th><th></th></tr>
-            </thead>
-            <tbody>
-              {claims.map((c) => (
-                <tr key={c.id} onClick={() => onOpen(c.id)}>
-                  <td className="mono" style={{ fontSize: 12.5 }}>{c.id}</td>
-                  <td>
-                    <b>{c.patient || '—'}</b>
-                    <div className="muted mono">{c.uhid || ''}</div>
-                  </td>
-                  <td className="amt mono">{inr(c.amount)}</td>
-                  <td>
-                    <span className={`pill ${c.status}`}>{c.status}</span>
-                    {c.status === 'REVIEW' && c.flags > 0 && (
-                      <span className="muted"> · {c.flags} flag{c.flags > 1 ? 's' : ''}</span>
-                    )}
-                  </td>
-                  <td onClick={(e) => e.stopPropagation()}>
-                    {c.status === 'APPROVED' && (
-                      <a className="btn ghost" style={{ padding: '6px 12px' }}
-                        href={api.bundleUrl(c.id)}>FHIR bundle</a>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        ) : attention.length === 0 ? (
+          <div className="empty">
+            <div className="big">All clear</div>
+            No claims are waiting on you right now.
+          </div>
+        ) : attention.map((c) => {
+          const s = statusMeta(c.status)
+          return (
+            <div key={c.id} className="dtable-row" style={GRID} onClick={() => onOpen(c.id)}>
+              <div className="cell-id">{c.id}</div>
+              <div>
+                <div className="cell-name">{c.patient || '—'}</div>
+                {c.uhid && <div className="cell-sub">{c.uhid}</div>}
+              </div>
+              <div className="cell-muted">
+                {c.flags > 0 ? `${c.flags} field${c.flags > 1 ? 's' : ''}` : '—'}
+              </div>
+              <div className="cell-amt">{inr(c.amount)}</div>
+              <div><span className={`pill ${s.cls}`}>{s.label}</span></div>
+              <div className="chev"><Chevron /></div>
+            </div>
+          )
+        })}
       </div>
-    </>
+    </div>
   )
 }

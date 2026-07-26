@@ -18,6 +18,7 @@ export const api = {
     files.forEach((f) => fd.append('files', f))
     return fetch('/api/claims', { method: 'POST', body: fd }).then(j)
   },
+  claimStatus: (id) => fetch(`/api/claims/${id}/status`).then(j),
   updateClaim: (id, extraction) =>
     fetch(`/api/claims/${id}`, {
       method: 'PUT',

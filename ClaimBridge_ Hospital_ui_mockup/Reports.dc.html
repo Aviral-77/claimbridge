@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F7F9FA;color:#14273D;font-family:'Public Sans',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#0E7C66}
+a:hover{color:#0a5f4f}
+summary{list-style:none;cursor:pointer}
+summary::-webkit-details-marker{display:none}
+.cb-tr:hover{background:#F2F4F5}
+@keyframes cbDraw{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion: reduce){ .cb-chart-line{animation:none !important;stroke-dashoffset:0 !important} }
+</style>
+</helmet>
+<div style="min-height:100vh">
+
+<div style="display:flex;align-items:center;justify-content:space-between;height:72px;padding:0 40px;background:#FFFFFF;border-bottom:1px solid #DFE3E7;position:sticky;top:0;z-index:20">
+  <div style="display:flex;align-items:center;gap:40px">
+    <a href="./Landing.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#14273D">
+      <div style="width:32px;height:32px;background:#14273D;display:flex;align-items:center;justify-content:center">
+        <span style="font-family:'IBM Plex Mono';font-weight:600;color:#F7F9FA;font-size:13px">CB</span>
+      </div>
+      <span style="font-family:'Archivo';font-weight:800;font-size:19px">ClaimBridge</span>
+    </a>
+    <div style="display:flex;gap:28px">
+      <a href="./Dashboard.dc.html" style="font-weight:600;font-size:15px;color:#5b6b7c;text-decoration:none;padding:26px 0 22px;border-bottom:2px solid transparent">Dashboard</a>
+      <a href="./Upload.dc.html" style="font-weight:600;font-size:15px;color:#5b6b7c;text-decoration:none;padding:26px 0 22px;border-bottom:2px solid transparent">Upload</a>
+      <a href="./Claims.dc.html" style="font-weight:600;font-size:15px;color:#5b6b7c;text-decoration:none;padding:26px 0 22px;border-bottom:2px solid transparent">Claims</a>
+      <a href="./Reports.dc.html" style="font-weight:700;font-size:15px;color:#14273D;text-decoration:none;padding:26px 0 22px;border-bottom:2px solid #0E7C66">Reports</a>
+    </div>
+  </div>
+  <details style="position:relative">
+    <summary style="display:flex;align-items:center;gap:10px;outline:none">
+      <div style="text-align:right">
+        <div style="font-weight:600;font-size:14px">Shree Krishna Nursing Home</div>
+        <div style="font-size:12px;color:#5b6b7c">Laxmi Nagar · Claims Desk</div>
+      </div>
+      <div style="width:36px;height:36px;border-radius:50%;background:#14273D;color:#F7F9FA;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono';font-size:13px;font-weight:600;flex-shrink:0">SK</div>
+    </summary>
+    <div style="position:absolute;right:0;top:48px;background:#FFFFFF;border:1px solid #DFE3E7;box-shadow:0 4px 16px rgba(20,39,61,.1);width:200px;padding:6px;z-index:30">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;color:#8a97a4;font-size:14px">
+        <span>Settings</span><span style="font-family:'IBM Plex Mono';font-size:10px;background:#EDEFF1;color:#8a97a4;padding:2px 6px">SOON</span>
+      </div>
+      <div style="height:1px;background:#EDEFF1;margin:4px 0"></div>
+      <a href="./Login.dc.html" style="display:block;padding:10px 12px;color:#14273D;font-size:14px;text-decoration:none">Sign out</a>
+    </div>
+  </details>
+</div>
+
+<div style="max-width:1240px;margin:0 auto;padding:48px 40px 100px">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:44px">
+    <div>
+      <h1 style="font-family:'Archivo';font-weight:800;font-size:30px;margin:0 0 4px">Reports</h1>
+      <div style="font-size:14px;color:#5b6b7c">Q2 FY2026 · 1 Apr – 21 Jul 2026</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="border:1px solid #DFE3E7;padding:11px 16px;font-size:14px;background:#FFFFFF;display:flex;align-items:center;gap:8px">
+        This quarter
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5b6b7c" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <div style="border:1px solid #14273D;color:#14273D;padding:11px 18px;font-size:14px;font-weight:700">Export</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#EDEFF1;margin-bottom:56px">
+    <div style="background:#FFFFFF;padding:26px 24px">
+      <div style="font-size:13px;color:#5b6b7c;margin-bottom:12px">Rejection rate</div>
+      <div style="font-family:'IBM Plex Mono';font-weight:600;font-size:30px">3.2%</div>
+      <div style="font-size:12px;color:#5b6b7c;margin-top:8px">vs 14.6% before ClaimBridge</div>
+    </div>
+    <div style="background:#FFFFFF;padding:26px 24px">
+      <div style="font-size:13px;color:#5b6b7c;margin-bottom:12px">Avg. days to payment</div>
+      <div style="font-family:'IBM Plex Mono';font-weight:600;font-size:30px">11</div>
+      <div style="font-size:12px;color:#5b6b7c;margin-top:8px">vs 34 days before</div>
+    </div>
+    <div style="background:#FFFFFF;padding:26px 24px">
+      <div style="font-size:13px;color:#5b6b7c;margin-bottom:12px">Claim value recovered</div>
+      <div style="font-family:'IBM Plex Mono';font-weight:600;font-size:30px;color:#0E7C66">₹21.4L</div>
+      <div style="font-size:12px;color:#5b6b7c;margin-top:8px">this quarter, previously rejected claims won on appeal</div>
+    </div>
+    <div style="background:#FFFFFF;padding:26px 24px">
+      <div style="font-size:13px;color:#5b6b7c;margin-bottom:12px">Staff-hours saved</div>
+      <div style="font-family:'IBM Plex Mono';font-weight:600;font-size:30px">612</div>
+      <div style="font-size:12px;color:#5b6b7c;margin-top:8px">vs manual claim preparation</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:56px">
+    <div style="font-family:'Archivo';font-weight:700;font-size:17px;margin-bottom:6px">Rejection rate over time</div>
+    <div style="font-size:13px;color:#5b6b7c;margin-bottom:20px">Monthly, since onboarding</div>
+    <svg width="100%" height="220" viewBox="0 0 900 220" preserveAspectRatio="none">
+      <line x1="0" y1="20" x2="900" y2="20" stroke="#EDEFF1" stroke-width="1"/>
+      <line x1="0" y1="70" x2="900" y2="70" stroke="#EDEFF1" stroke-width="1"/>
+      <line x1="0" y1="120" x2="900" y2="120" stroke="#EDEFF1" stroke-width="1"/>
+      <line x1="0" y1="170" x2="900" y2="170" stroke="#EDEFF1" stroke-width="1"/>
+      <polyline class="cb-chart-line" points="0,30 150,55 300,90 450,130 600,155 750,168 900,178" fill="none" stroke="#0E7C66" stroke-width="2" stroke-dasharray="900" stroke-dashoffset="900" style="animation:cbDraw 1200ms ease-out forwards"/>
+      <g font-family="IBM Plex Mono" font-size="11" fill="#8a97a4">
+        <text x="0" y="14">14.6%</text>
+        <text x="850" y="200">3.2%</text>
+      </g>
+    </svg>
+    <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono';font-size:11px;color:#8a97a4;margin-top:4px">
+      <span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span>
+    </div>
+  </div>
+
+  <div style="margin-bottom:56px">
+    <div style="font-family:'Archivo';font-weight:700;font-size:17px;margin-bottom:20px">By insurer</div>
+    <div style="border-top:1px solid #DFE3E7">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr;padding:14px 0;border-bottom:1px solid #DFE3E7">
+        <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c">INSURER</div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c;text-align:right">CLAIMS</div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c;text-align:right">REJECTION %</div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:.04em;color:#5b6b7c;text-align:right">AVG DAYS TO PAYMENT</div>
+      </div>
+      <sc-for list="{{insurers}}" as="ins" hint-placeholder-count="4">
+        <div class="cb-tr" style="display:grid;grid-template-columns:2fr 1fr 1fr 1.2fr;padding:16px 0;border-bottom:1px solid #EDEFF1;transition:background 150ms ease">
+          <div style="font-size:14px">{{ins.name}}</div>
+          <div style="font-family:'IBM Plex Mono';font-size:13px;text-align:right">{{ins.claims}}</div>
+          <div style="font-family:'IBM Plex Mono';font-size:13px;text-align:right">{{ins.rejection}}</div>
+          <div style="font-family:'IBM Plex Mono';font-size:13px;text-align:right">{{ins.days}}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div>
+    <div style="font-family:'Archivo';font-weight:700;font-size:17px;margin-bottom:20px">Top rejection reasons</div>
+    <div style="border-top:1px solid #DFE3E7">
+      <sc-for list="{{reasons}}" as="r" hint-placeholder-count="4">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #EDEFF1">
+          <div style="font-size:14px">{{r.label}}</div>
+          <div style="font-family:'IBM Plex Mono';font-size:13px;color:#5b6b7c">{{r.count}}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      insurers: [
+        { name: 'Star Health', claims: 118, rejection: '2.5%', days: 9 },
+        { name: 'HDFC Ergo', claims: 96, rejection: '3.1%', days: 12 },
+        { name: 'ICICI Lombard', claims: 74, rejection: '4.0%', days: 13 },
+        { name: 'Bajaj Allianz', claims: 53, rejection: '4.8%', days: 15 },
+      ],
+      reasons: [
+        { label: 'Diagnosis–procedure code mismatch', count: 14 },
+        { label: 'Missing itemized bill', count: 9 },
+        { label: 'Pre-authorization not on file', count: 6 },
+        { label: 'Policy exclusion', count: 4 },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+# ClaimBridge backend dependencies.
+# Install locally:  pip install -r requirements.txt
+# In Docker this is installed into the image (see extraction/Dockerfile).
+
+# --- current runtime deps (engine + FastAPI) ---
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9      # FastAPI Form()/File() uploads
+pydantic>=2.6
+requests>=2.31              # llm.py raw REST (provider-agnostic)
+rapidfuzz>=3.6              # coder.py fuzzy retrieval
+pypdf>=4.0                  # text-layer PDF extraction
+pdf2image>=1.17            # scan rendering (needs poppler system package)
+fhir.resources>=7.1.0      # fhir_builder.py — deterministic FHIR R4 bundle
+rich>=13.7                 # CLI output (pipeline.py / evaluate.py)
+
+# --- Phase A infra clients (used from A2 onward; harmless to install now) ---
+SQLAlchemy>=2.0            # A2 — ORM / DB access
+psycopg[binary]>=3.1      # A2 — Postgres driver (postgresql+psycopg://)
+alembic>=1.13             # A2 — schema migrations
+celery>=5.3               # A4 — task queue
+redis>=5.0                # A4 — Celery broker/result backend + cache
+boto3>=1.34               # A3 — S3 / MinIO object storage
+
+# NOTE: streamlit (legacy app.py) is intentionally NOT included — the React
+# frontend supersedes it. Install it separately if you want the quick-demo UI.

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F7F9FA;color:#14273D;font-family:'Public Sans',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#0E7C66}
+a:hover{color:#0a5f4f}
+@keyframes cbInputGlide{
+  0%{opacity:0;transform:translateY(-50%) translateX(-36px)}
+  9%{opacity:1;transform:translateY(-50%) translateX(0)}
+  42%{opacity:1;transform:translateY(-50%) translateX(0)}
+  52%{opacity:0;transform:translateY(-50%) translateX(30px)}
+  100%{opacity:0;transform:translateY(-50%) translateX(30px)}
+}
+@keyframes cbEnginePulse{
+  0%,44%{opacity:.35;transform:translate(-50%,-50%) scale(1)}
+  49%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}
+  56%,100%{opacity:.35;transform:translate(-50%,-50%) scale(1)}
+}
+@keyframes cbOutputAppear{
+  0%,54%{opacity:0;transform:translateY(-50%) translateX(26px) scale(.98)}
+  63%{opacity:1;transform:translateY(-50%) translateX(0) scale(1)}
+  88%{opacity:1;transform:translateY(-50%) translateX(0) scale(1)}
+  97%,100%{opacity:0;transform:translateY(-50%) translateX(8px) scale(.99)}
+}
+@media (prefers-reduced-motion: reduce){
+  .cb-hero-anim [data-anim]{animation:none !important}
+  .cb-hero-anim [data-anim="input"]{opacity:0 !important}
+  .cb-hero-anim [data-anim="output"]{opacity:1 !important;transform:translateY(-50%) !important}
+  .cb-hero-anim [data-anim="engine"] > div{opacity:1 !important;transform:translate(-50%,-50%) !important}
+}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#F7F9FA">
+
+<div style="display:flex;align-items:center;justify-content:space-between;height:80px;padding:0 48px;border-bottom:1px solid #DFE3E7">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="width:34px;height:34px;background:#14273D;display:flex;align-items:center;justify-content:center">
+      <span style="font-family:'IBM Plex Mono';font-weight:600;color:#F7F9FA;font-size:14px">CB</span>
+    </div>
+    <span style="font-family:'Archivo';font-weight:800;font-size:21px;letter-spacing:-.01em">ClaimBridge</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:36px">
+    <a href="#how" style="text-decoration:none;color:#14273D;font-weight:600;font-size:15px">How it works</a>
+    <a href="#proof" style="text-decoration:none;color:#14273D;font-weight:600;font-size:15px">Accuracy</a>
+    <a href="./Login.dc.html" style="text-decoration:none;color:#14273D;font-weight:600;font-size:15px">Log in</a>
+    <a href="./Login.dc.html" style="text-decoration:none;background:#0E7C66;color:#F7F9FA;font-weight:700;font-size:15px;padding:12px 22px;">Request a demo</a>
+  </div>
+</div>
+
+<div style="max-width:1360px;margin:0 auto;padding:88px 48px 100px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center">
+  <div>
+    <div style="display:inline-flex;align-items:center;gap:8px;border:1px solid #DFE3E7;padding:6px 12px;margin-bottom:28px">
+      <span style="width:7px;height:7px;background:#0E7C66;display:inline-block"></span>
+      <span style="font-family:'IBM Plex Mono';font-size:12px;letter-spacing:.06em;color:#14273D">BUILT FOR NHCX SUBMISSION</span>
+    </div>
+    <h1 style="font-family:'Archivo';font-weight:800;font-size:56px;line-height:1.05;letter-spacing:-.02em;margin:0 0 24px">Messy hospital paperwork.<br>Clean, submittable claims.</h1>
+    <p style="font-family:'Public Sans';font-size:19px;line-height:1.6;color:#3d4c5e;max-width:520px;margin:0 0 36px">ClaimBridge reads scanned discharge cards, bills and prescriptions — however faded, stapled or handwritten — and produces a coded, NHCX-format claim your clerks can approve in minutes, not days.</p>
+    <div style="display:flex;gap:16px;margin-bottom:44px">
+      <a href="./Login.dc.html" style="text-decoration:none;background:#0E7C66;color:#F7F9FA;font-weight:700;font-size:16px;padding:16px 28px;">Request a demo</a>
+      <a href="#how" style="text-decoration:none;border:1px solid #14273D;color:#14273D;font-weight:700;font-size:16px;padding:16px 28px;">See it work</a>
+    </div>
+    <div style="display:flex;gap:40px">
+      <div>
+        <div style="font-family:'Archivo';font-weight:800;font-size:26px">100%</div>
+        <div style="font-size:13px;color:#5b6b7c">field accuracy on labelled benchmark*</div>
+      </div>
+      <div>
+        <div style="font-family:'Archivo';font-weight:800;font-size:26px">~20s</div>
+        <div style="font-size:13px;color:#5b6b7c">per claim vs 45–90 min manual*</div>
+      </div>
+      <div>
+        <div style="font-family:'Archivo';font-weight:800;font-size:26px">20+</div>
+        <div style="font-size:13px;color:#5b6b7c">validation rules applied</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cb-hero-anim" style="position:relative;height:420px">
+    <div data-anim="input" style="position:absolute;left:0;top:50%;width:230px;height:280px;animation:cbInputGlide 7s ease-in-out infinite">
+      <div style="position:absolute;top:24px;left:24px;width:100%;height:100%;background:#EDEFF1;border:1px solid #DFE3E7;opacity:.45;transform:scale(.94)"></div>
+      <div style="position:absolute;top:12px;left:12px;width:100%;height:100%;background:#EDEFF1;border:1px solid #DFE3E7;opacity:.7;transform:scale(.97)"></div>
+      <div style="position:absolute;top:0;left:0;width:100%;height:100%;padding:20px;background:#FFFFFF;border:1px solid #DFE3E7;box-shadow:0 4px 14px rgba(20,39,61,.06)">
+        <div style="font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.06em;color:#8a97a4;margin-bottom:14px">SCANNED · DISCHARGE CARD</div>
+        <div style="display:flex;flex-direction:column;gap:9px;opacity:.85">
+          <div style="height:9px;width:88%;background:linear-gradient(90deg,#b9bfc4,#cdd2d5);transform:skewX(-1deg)"></div>
+          <div style="height:9px;width:64%;background:linear-gradient(90deg,#bcc2c6,#ccd1d4)"></div>
+          <div style="height:9px;width:76%;background:linear-gradient(90deg,#b6bcc1,#c9ced1);transform:skewX(1deg)"></div>
+          <div style="height:9px;width:40%;background:#c3c8cc"></div>
+          <div style="height:9px;width:80%;background:linear-gradient(90deg,#b9bfc4,#cdd2d5)"></div>
+          <div style="height:9px;width:55%;background:#c6cbce;transform:skewX(-1deg)"></div>
+        </div>
+        <div style="margin-top:16px;display:inline-flex;align-items:center;gap:6px;background:#FBEEDD;padding:5px 9px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C67B1F" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          <span style="font-family:'IBM Plex Mono';font-size:10px;color:#C67B1F">OCR ambiguous</span>
+        </div>
+      </div>
+    </div>
+
+    <div data-anim="engine" style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:#DFE3E7">
+      <div style="position:absolute;top:50%;left:50%;width:48px;height:48px;background:#F7F9FA;border:2px solid #14273D;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%);animation:cbEnginePulse 7s ease-in-out infinite">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14273D" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </div>
+    </div>
+
+    <div data-anim="output" style="position:absolute;right:0;top:50%;width:320px;padding:24px;background:#FFFFFF;border:1px solid #DFE3E7;box-shadow:0 4px 18px rgba(20,39,61,.08);animation:cbOutputAppear 7s ease-in-out infinite">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-family:'IBM Plex Mono';font-size:11px;color:#5b6b7c">CB-2291048</span>
+        <span style="background:#14273D;color:#F7F9FA;font-family:'IBM Plex Mono';font-size:10px;font-weight:600;padding:4px 8px;letter-spacing:.04em">APPROVED</span>
+      </div>
+      <div style="font-size:13px;color:#5b6b7c;margin-bottom:12px">Rahul Kumar · UHID <span style="font-family:'IBM Plex Mono';color:#14273D">LC133326</span></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #EDEFF1">
+          <span style="font-size:13px;color:#5b6b7c">Diagnosis (ICD-10)</span>
+          <span style="display:flex;align-items:center;gap:8px"><span style="font-family:'IBM Plex Mono';font-size:13px">K35.80</span><span style="background:#E4F3EF;color:#0E7C66;font-family:'IBM Plex Mono';font-size:10px;font-weight:600;padding:2px 6px">97%</span></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #EDEFF1">
+          <span style="font-size:13px;color:#5b6b7c">Procedure (SNOMED)</span>
+          <span style="display:flex;align-items:center;gap:8px"><span style="font-family:'IBM Plex Mono';font-size:13px">174041007</span><span style="background:#E4F3EF;color:#0E7C66;font-family:'IBM Plex Mono';font-size:10px;font-weight:600;padding:2px 6px">96%</span></span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+          <span style="font-size:13px;color:#5b6b7c">Claim amount</span>
+          <span style="display:flex;align-items:center;gap:8px"><span style="font-family:'IBM Plex Mono';font-size:13px">₹74,323</span><span style="background:#E4F3EF;color:#0E7C66;font-family:'IBM Plex Mono';font-size:10px;font-weight:600;padding:2px 6px">99%</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="how" style="border-top:1px solid #DFE3E7;padding:96px 48px">
+  <div style="max-width:1360px;margin:0 auto">
+    <div style="max-width:640px;margin-bottom:56px">
+      <div style="font-family:'IBM Plex Mono';font-size:12px;letter-spacing:.08em;color:#0E7C66;margin-bottom:12px">HOW IT WORKS</div>
+      <h2 style="font-family:'Archivo';font-weight:800;font-size:38px;margin:0;letter-spacing:-.01em">Three steps from stack of paper to submitted claim</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#DFE3E7;border:1px solid #DFE3E7">
+      <div style="background:#F7F9FA;padding:36px">
+        <div style="font-family:'IBM Plex Mono';color:#8a97a4;font-size:14px;margin-bottom:20px">01</div>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14273D" stroke-width="1.75" style="margin-bottom:20px"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
+        <div style="font-family:'Archivo';font-weight:700;font-size:20px;margin-bottom:10px">Upload</div>
+        <div style="font-size:15px;line-height:1.6;color:#3d4c5e">Drop in scanned discharge cards, bills and prescriptions in any condition — photographed, faxed, or faded carbon copies.</div>
+      </div>
+      <div style="background:#F7F9FA;padding:36px">
+        <div style="font-family:'IBM Plex Mono';color:#8a97a4;font-size:14px;margin-bottom:20px">02</div>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14273D" stroke-width="1.75" style="margin-bottom:20px"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+        <div style="font-family:'Archivo';font-weight:700;font-size:20px;margin-bottom:10px">Review</div>
+        <div style="font-size:15px;line-height:1.6;color:#3d4c5e">Every extracted field carries its AI confidence. Anything under 85% is flagged for a clerk to confirm — nothing ambiguous slips through silently.</div>
+      </div>
+      <div style="background:#F7F9FA;padding:36px">
+        <div style="font-family:'IBM Plex Mono';color:#8a97a4;font-size:14px;margin-bottom:20px">03</div>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#14273D" stroke-width="1.75" style="margin-bottom:20px"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z"/><path d="m9 12 2 2 4-4"/></svg>
+        <div style="font-family:'Archivo';font-weight:700;font-size:20px;margin-bottom:10px">Approve</div>
+        <div style="font-size:15px;line-height:1.6;color:#3d4c5e">One click builds a validated FHIR bundle in NHCX format and submits it — with a full audit trail back to the original scan.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="proof" style="border-top:1px solid #DFE3E7;background:#14273D;padding:96px 48px;color:#F7F9FA">
+  <div style="max-width:1360px;margin:0 auto">
+    <div style="max-width:640px;margin-bottom:56px">
+      <div style="font-family:'IBM Plex Mono';font-size:12px;letter-spacing:.08em;color:#5fd9bd;margin-bottom:12px">ACCURACY &amp; PROOF</div>
+      <h2 style="font-family:'Archivo';font-weight:800;font-size:38px;margin:0 0 16px;letter-spacing:-.01em">Measured against real claim rejections, not a demo dataset</h2>
+      <p style="font-size:16px;line-height:1.6;color:#b7c2cd;margin:0">Benchmarked across a pilot cohort of scanned discharge documents from network hospitals, compared against fully manual data entry.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(247,249,250,.15);border:1px solid rgba(247,249,250,.15);margin-bottom:20px">
+      <div style="background:#14273D;padding:28px 24px">
+        <div style="font-family:'Archivo';font-weight:800;font-size:40px">100%</div>
+        <div style="font-size:14px;color:#b7c2cd;margin-top:6px">field accuracy on labelled benchmark</div>
+      </div>
+      <div style="background:#14273D;padding:28px 24px">
+        <div style="font-family:'Archivo';font-weight:800;font-size:40px">~20s</div>
+        <div style="font-size:14px;color:#b7c2cd;margin-top:6px">average processing time per claim</div>
+      </div>
+      <div style="background:#14273D;padding:28px 24px">
+        <div style="font-family:'Archivo';font-weight:800;font-size:40px">45–90m</div>
+        <div style="font-size:14px;color:#b7c2cd;margin-top:6px">manual equivalent, per claim</div>
+      </div>
+      <div style="background:#14273D;padding:28px 24px">
+        <div style="font-family:'Archivo';font-weight:800;font-size:40px">20+</div>
+        <div style="font-size:14px;color:#b7c2cd;margin-top:6px">validation rules run on every claim</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#7f8ea0">*Benchmark: 8 patients, 30 documents (clean + degraded scans), manually labelled ground truth. Results on your own document mix will vary.</div>
+  </div>
+</div>
+
+<div style="padding:72px 48px 40px">
+  <div style="max-width:1360px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:48px;border-bottom:1px solid #DFE3E7">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="width:28px;height:28px;background:#14273D;display:flex;align-items:center;justify-content:center">
+          <span style="font-family:'IBM Plex Mono';font-weight:600;color:#F7F9FA;font-size:11px">CB</span>
+        </div>
+        <span style="font-family:'Archivo';font-weight:800;font-size:17px">ClaimBridge</span>
+      </div>
+      <div style="font-size:14px;color:#5b6b7c;max-width:280px;line-height:1.6">AI that converts messy hospital documents into government-format insurance claims, built for the National Health Claim Exchange.</div>
+    </div>
+    <div>
+      <div style="font-family:'IBM Plex Mono';font-size:12px;color:#8a97a4;letter-spacing:.06em;margin-bottom:14px">PRODUCT</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="#how" style="text-decoration:none;color:#14273D;font-size:14px">How it works</a>
+        <a href="#proof" style="text-decoration:none;color:#14273D;font-size:14px">Accuracy</a>
+        <a href="./Login.dc.html" style="text-decoration:none;color:#14273D;font-size:14px">Log in</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:'IBM Plex Mono';font-size:12px;color:#8a97a4;letter-spacing:.06em;margin-bottom:14px">COMPANY</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="#" style="text-decoration:none;color:#14273D;font-size:14px">About</a>
+        <a href="#" style="text-decoration:none;color:#14273D;font-size:14px">Security</a>
+        <a href="#" style="text-decoration:none;color:#14273D;font-size:14px">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:'IBM Plex Mono';font-size:12px;color:#8a97a4;letter-spacing:.06em;margin-bottom:14px">COMPLIANCE</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="#" style="text-decoration:none;color:#14273D;font-size:14px">NHCX guide</a>
+        <a href="#" style="text-decoration:none;color:#14273D;font-size:14px">Data policy</a>
+      </div>
+    </div>
+  </div>
+  <div style="max-width:1360px;margin:24px auto 0;font-size:13px;color:#8a97a4">© 2026 ClaimBridge. Built for Indian hospitals.</div>
+</div>
+
+</div>
+
+</x-dc>
+</body>
+</html>

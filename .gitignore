@@ -1,8 +1,47 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+
+# --- Node / Vite (frontend) ---
 node_modules/
 dist/
+.vite/
+npm-debug.log*
+yarn-error.log*
+*.local
+
+# --- Env / secrets (never commit real keys) ---
+# local Windows-batch env (set VAR=...)
+.env
+# docker env — holds real API keys
+.env.docker
+# but keep the template tracked
+!.env.docker.example
+
+# --- App data / runtime state (now in Postgres + S3/MinIO) ---
 app_data/
+logs/
 claims_out*/
 fhir_out*/
-__pycache__/
-.env
-*.pyc
+*.db
+*.sqlite3
+# downloaded FHIR bundles
+*_bundle.json
+
+# --- Design mockups / archives (build artifacts, not source) ---
+*.zip
+
+# --- OS / editor cruft ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
