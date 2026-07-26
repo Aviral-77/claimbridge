@@ -21,6 +21,8 @@ alembic>=1.13             # A2 — schema migrations
 celery>=5.3               # A4 — task queue
 redis>=5.0                # A4 — Celery broker/result backend + cache
 boto3>=1.34               # A3 — S3 / MinIO object storage
+PyJWT>=2.8                # A7 — JWT auth tokens
+bcrypt>=4.1               # A7 — password hashing
 
 # NOTE: streamlit (legacy app.py) is intentionally NOT included — the React
 # frontend supersedes it. Install it separately if you want the quick-demo UI.

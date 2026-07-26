@@ -104,6 +104,32 @@ class Claim(Base):
         }
 
 
+class Hospital(Base):
+    """A tenant. Every claim and user belongs to one hospital (A7)."""
+
+    __tablename__ = "hospitals"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    name: Mapped[str] = mapped_column(String(255))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+
+class User(Base):
+    """A billing-desk user. Authenticates with a bcrypt password; scoped to one
+    hospital for multi-tenancy (A7). Replaces the demo DEMO_USERS dict."""
+
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(255))
+    password_hash: Mapped[str] = mapped_column(String(255))
+    hospital_id: Mapped[str] = mapped_column(
+        ForeignKey("hospitals.id"), index=True)
+    role: Mapped[str] = mapped_column(String(32), default="clerk")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+
 class Document(Base):
     """A source file uploaded for a claim. Bytes live on disk in A2 (storage_key
     filled in A3 when they move to S3); this table holds the metadata."""

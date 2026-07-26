@@ -81,6 +81,7 @@ services:
         condition: service_started
     environment:
       PYTHONPATH: /app             # so local modules import cleanly everywhere
+      JWT_SECRET: ${JWT_SECRET:-dev-insecure-change-me}   # sign auth tokens (set a real one in prod)
       # LLM (from .env.docker) — the engine still calls the provider directly.
       LLM_PROVIDER: ${LLM_PROVIDER:-gemini}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}

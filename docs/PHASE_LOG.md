@@ -296,11 +296,52 @@ Made async jobs first-class so a `task_id` is trackable end to end.
 Apply: `docker compose up -d --force-recreate api worker` (api runs
 `alembic upgrade head` → applies 0002; worker picks up new code).
 
+## Phase A7 — JWT auth + multi-tenancy
+
+**Goal:** replace the demo auth (`DEMO_USERS` + in-memory `_TOKENS` dict) with
+real identity and per-hospital data isolation. The in-memory token dict was also
+a scaling bug — a token issued by one API instance wasn't known to another;
+stateless JWTs fix that.
+
+**Files added:**
+- `extraction/auth.py` — bcrypt password hashing, JWT create/decode
+  (`PyJWT`, HS256, 12h, `JWT_SECRET` from env), a `get_current_user` dependency
+  (`Authorization: Bearer`), a `user_from_query_token` for media endpoints, and
+  an idempotent `seed_demo()` (same demo emails/password as before).
+- `alembic/versions/0003_auth.py` — `hospitals` + `users` tables.
+
+**Files changed:**
+- `models.py` — `Hospital` and `User` (email unique, bcrypt `password_hash`,
+  `hospital_id` FK, role). (`claims.hospital_id` existed since A2.)
+- `api.py` — `login` verifies against the `users` table and issues a JWT; every
+  claim/task endpoint now requires `current_user` and is **scoped by
+  hospital_id** via `_owned_or_404` (cross-tenant reads 404, not 403 — don't
+  leak existence). `create_claim` stamps the caller's `hospital_id`. `bundle` and
+  `preview` (browser `<a>`/`<img>`, no header) authenticate via `?token=`.
+  `startup` runs `seed_demo`.
+- `frontend/src/api.js` — sends `Authorization: Bearer <jwt>` (read from the
+  saved session) on every call; media URLs append `?token=`.
+- `docker-compose.yml` — `JWT_SECRET` on the api service.
+- `requirements.txt` — `PyJWT`, `bcrypt`.
+
+**Verified (SQLite round-trip):** bcrypt verify (good→True, bad→False); JWT
+decode + tamper→None; `seed_demo` idempotent (2 hospitals, 2 users); tenant
+isolation (skn query returns only skn claims). `api.py` imports (12 routes);
+compose valid; `npm run build` passes.
+
+**Apply:** requirements changed, so rebuild —
+`docker compose up -d --build api worker` (api runs `alembic upgrade head` →
+0003, then seeds demo users). Login unchanged for the user: `desk@skn.hospital` /
+`claims123` (hospital **skn**) or `admin@lifecare.in` / `claims123` (**lifecare**).
+Note: claims created before A7 are under the `demo` tenant and won't show for
+these users — re-upload to see them under `skn`.
+
 ## Phase A — status: COMPLETE (local)
 
-All state decoupled from the API process: **Postgres** (claims/validations),
+All state decoupled from the API process: **Postgres** (claims/validations/users),
 **S3/MinIO** (documents), **Celery + Redis** (async pipeline), non-blocking API +
-polling frontend, Alembic migrations, per-component file logging. Runs entirely
-via `docker compose --env-file .env.docker up --build`. Engine + benchmark
-(`pipeline.py`/`evaluate.py`) untouched. Next: **Phase B** (deploy to AWS) and
-**A7** (JWT auth) — see `ARCHITECTURE.md`.
+polling frontend, **JWT auth + per-hospital multi-tenancy**, Alembic migrations,
+per-component file logging, task tracking. Runs entirely via
+`docker compose --env-file .env.docker up --build`. Engine + benchmark
+(`pipeline.py`/`evaluate.py`) untouched. **Next: Phase B** (deploy to AWS) — see
+`ARCHITECTURE.md`.

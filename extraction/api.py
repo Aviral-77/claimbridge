@@ -7,10 +7,10 @@ Run (from the extraction/ folder):
   uvicorn api:app --reload --port 8000
   celery -A tasks.celery_app worker --loglevel=info   # separate process
 
-Phase A2: state in a database (Postgres).
-Phase A3: document bytes in S3/MinIO (no more app_data/uploads on disk).
-Phase A4: processing runs on a Celery worker (the API delegates to it).
-The API still waits for the result here — Phase A5 makes that non-blocking (202).
+Phase A2: state in Postgres.  A3: documents in S3/MinIO.  A4/A5: async on a
+Celery worker (non-blocking API).  A6: frontend polls.  A7: JWT auth +
+per-hospital multi-tenancy (every claim endpoint requires a bearer token and is
+scoped to the caller's hospital).
 """
 
 import base64
@@ -29,9 +29,11 @@ from sqlalchemy.orm import Session
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from db import get_db, init_db          # noqa: E402
-from logging_setup import get_logger    # noqa: E402
-from models import Claim, Document       # noqa: E402
+from auth import (create_token, get_current_user, seed_demo,  # noqa: E402
+                  user_from_query_token, verify_password)
+from db import SessionLocal, get_db, init_db          # noqa: E402
+from logging_setup import get_logger                   # noqa: E402
+from models import Claim, Document, Hospital, User      # noqa: E402
 
 log = get_logger("api")
 jobs = get_logger("jobs")     # shared job-lifecycle log (logs/jobs.log)
@@ -45,6 +47,11 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"],
 def _startup():
     log.info("API starting up")
     init_db()
+    db = SessionLocal()
+    try:
+        seed_demo(db)
+    finally:
+        db.close()
     try:
         import storage
         storage.ensure_bucket()
@@ -53,56 +60,50 @@ def _startup():
     log.info("startup complete")
 
 
-# --- demo auth -------------------------------------------------------------
-# Demo-grade: fixed users, opaque token. Real identity (JWT, hashed passwords,
-# multi-tenancy) is Phase A7.
-DEMO_USERS = {
-    "desk@skn.hospital": {"password": "claims123",
-                          "name": "Claims Desk",
-                          "org": "Shree Krishna Nursing Home"},
-    "admin@lifecare.in": {"password": "claims123",
-                          "name": "Admin",
-                          "org": "LifeCare Multispeciality Hospital"},
-}
-_TOKENS = {}
+def _owned_or_404(claim: Claim | None, user: User) -> Claim:
+    """404 (not 403) if the claim doesn't exist OR belongs to another hospital —
+    don't reveal existence across tenants."""
+    if not claim or claim.hospital_id != user.hospital_id:
+        raise HTTPException(404, "claim not found")
+    return claim
 
 
+# --- auth ------------------------------------------------------------------
 @app.post("/api/login")
-def login(body: dict):
+def login(body: dict, db: Session = Depends(get_db)):
     email = (body.get("email") or "").strip().lower()
-    user = DEMO_USERS.get(email)
-    if not user or user["password"] != (body.get("password") or ""):
+    user = db.execute(select(User).where(User.email == email)).scalar_one_or_none()
+    if not user or not verify_password(body.get("password") or "", user.password_hash):
         log.warning("login failed for %r", email)
         raise HTTPException(401, "Email or password is incorrect")
-    token = base64.urlsafe_b64encode(os.urandom(24)).decode()
-    _TOKENS[token] = email
-    log.info("login ok: %s (%s)", email, user["org"])
-    return {"token": token, "name": user["name"], "org": user["org"],
-            "email": email}
+    hospital = db.get(Hospital, user.hospital_id)
+    token = create_token(user)
+    log.info("login ok: %s (%s)", email, user.hospital_id)
+    return {"token": token, "name": user.name,
+            "org": hospital.name if hospital else user.hospital_id,
+            "email": user.email, "role": user.role}
 
 
 @app.post("/api/logout")
 def logout(body: dict):
-    removed = _TOKENS.pop(body.get("token"), None)
-    log.info("logout: %s", removed or "(unknown token)")
+    # Stateless JWT — logout is client-side (drop the token). No server state.
     return {"ok": True}
 
 
 # --- claims ----------------------------------------------------------------
 @app.get("/api/claims")
-def list_claims(db: Session = Depends(get_db)):
+def list_claims(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     claims = db.execute(
-        select(Claim).order_by(Claim.updated_at.desc())).scalars().all()
-    log.info("list_claims -> %d claim(s)", len(claims))
+        select(Claim).where(Claim.hospital_id == user.hospital_id)
+        .order_by(Claim.updated_at.desc())).scalars().all()
+    log.info("list_claims(%s) -> %d claim(s)", user.hospital_id, len(claims))
     return [c.summary() for c in claims]
 
 
 @app.get("/api/claims/{cid}")
-def get_claim(cid: str, db: Session = Depends(get_db)):
-    claim = db.get(Claim, cid)
-    if not claim:
-        log.warning("get_claim: %s not found", cid)
-        raise HTTPException(404, "claim not found")
+def get_claim(cid: str, db: Session = Depends(get_db),
+              user: User = Depends(get_current_user)):
+    claim = _owned_or_404(db.get(Claim, cid), user)
     log.info("get_claim: %s (status=%s, docs=%d)",
              cid, claim.status, len(claim.documents))
     return {
@@ -118,14 +119,18 @@ def get_claim(cid: str, db: Session = Depends(get_db)):
 @app.post("/api/claims", status_code=202)
 async def create_claim(claim_id: str = Form(...),
                        files: List[UploadFile] = File(...),
-                       db: Session = Depends(get_db)):
-    """Accept the upload, enqueue processing, and return 202 immediately. The
-    client polls GET /api/claims/{id}/status for progress (A6)."""
+                       db: Session = Depends(get_db),
+                       user: User = Depends(get_current_user)):
+    """Accept the upload, enqueue processing, return 202. Poll .../status (A6)."""
     import storage
     from tasks import process_claim
 
     cid = claim_id.strip()
-    log.info("create_claim: %s (%d file(s))", cid, len(files))
+    existing = db.get(Claim, cid)
+    if existing and existing.hospital_id != user.hospital_id:
+        raise HTTPException(403, "claim id belongs to another hospital")
+    log.info("create_claim: %s (%d file(s), hospital=%s)",
+             cid, len(files), user.hospital_id)
 
     # 1) Upload document bytes to object storage; record metadata.
     docs = []
@@ -137,7 +142,8 @@ async def create_claim(claim_id: str = Form(...),
                              storage_key=key, size_bytes=len(blob)))
 
     # 2) Create/replace the claim row as QUEUED.
-    claim = db.get(Claim, cid) or Claim(id=cid)
+    claim = existing or Claim(id=cid)
+    claim.hospital_id = user.hospital_id
     claim.status = "QUEUED"
     claim.approved = False
     claim.extraction = {}
@@ -152,22 +158,22 @@ async def create_claim(claim_id: str = Form(...),
     db.add(claim)
     db.commit()
 
-    # 3) Hand off to the worker and return right away — the API is now free.
+    # 3) Hand off to the worker and return right away.
     async_result = process_claim.delay(cid)
     claim.task_id = async_result.id
     claim.stage = "queued"
     db.commit()
     log.info("[%s] QUEUED — task %s", cid, async_result.id)
-    jobs.info("task=%s claim=%s stage=queued", async_result.id, cid)
+    jobs.info("task=%s claim=%s hospital=%s stage=queued",
+              async_result.id, cid, user.hospital_id)
     return {"id": cid, "status": "QUEUED", "task_id": async_result.id}
 
 
 @app.get("/api/claims/{cid}/status")
-def claim_status(cid: str, db: Session = Depends(get_db)):
+def claim_status(cid: str, db: Session = Depends(get_db),
+                 user: User = Depends(get_current_user)):
     """Lightweight polling endpoint — status + live stage, no heavy payload."""
-    claim = db.get(Claim, cid)
-    if not claim:
-        raise HTTPException(404, "claim not found")
+    claim = _owned_or_404(db.get(Claim, cid), user)
     log.debug("status: %s -> %s (%s)", cid, claim.status, claim.stage)
     return {
         "id": cid,
@@ -180,43 +186,12 @@ def claim_status(cid: str, db: Session = Depends(get_db)):
     }
 
 
-# --- task tracking ---------------------------------------------------------
-@app.get("/api/tasks")
-def list_tasks(db: Session = Depends(get_db)):
-    """All processing jobs (claims that have been enqueued), newest first."""
-    claims = db.execute(
-        select(Claim).where(Claim.task_id.isnot(None))
-        .order_by(Claim.updated_at.desc())).scalars().all()
-    log.info("list_tasks -> %d job(s)", len(claims))
-    return [c.job() for c in claims]
-
-
-@app.get("/api/tasks/{task_id}")
-def get_task(task_id: str, db: Session = Depends(get_db)):
-    """Track one job by its Celery task id: DB status/stage + live Celery state."""
-    claim = db.execute(
-        select(Claim).where(Claim.task_id == task_id)).scalar_one_or_none()
-    if not claim:
-        log.warning("get_task: %s not found", task_id)
-        raise HTTPException(404, "task not found")
-    view = claim.job()
-    try:                                   # best-effort — backend may have expired
-        from tasks import celery_app
-        view["celery_state"] = celery_app.AsyncResult(task_id).state
-    except Exception:
-        view["celery_state"] = None
-    log.info("get_task: %s stage=%s status=%s", task_id, claim.stage, claim.status)
-    return view
-
-
 @app.put("/api/claims/{cid}")
-def update_claim(cid: str, ext: dict, db: Session = Depends(get_db)):
+def update_claim(cid: str, ext: dict, db: Session = Depends(get_db),
+                 user: User = Depends(get_current_user)):
     from validator import validate
 
-    claim = db.get(Claim, cid)
-    if not claim:
-        log.warning("update_claim: %s not found", cid)
-        raise HTTPException(404, "claim not found")
+    claim = _owned_or_404(db.get(Claim, cid), user)
     report = validate(ext)
     patient = (ext.get("patient") or {}).get("name")
     uhid = (ext.get("patient") or {}).get("uhid")
@@ -232,13 +207,11 @@ def update_claim(cid: str, ext: dict, db: Session = Depends(get_db)):
 
 
 @app.post("/api/claims/{cid}/approve")
-def approve(cid: str, db: Session = Depends(get_db)):
+def approve(cid: str, db: Session = Depends(get_db),
+            user: User = Depends(get_current_user)):
     from fhir_builder import build_bundle
 
-    claim = db.get(Claim, cid)
-    if not claim:
-        log.warning("approve: %s not found", cid)
-        raise HTTPException(404, "claim not found")
+    claim = _owned_or_404(db.get(Claim, cid), user)
     if not claim.validation or claim.validation["status"] == "FAIL":
         log.warning("approve blocked: %s has failing checks", cid)
         raise HTTPException(409, "claim has failing checks — fix before approving")
@@ -251,10 +224,10 @@ def approve(cid: str, db: Session = Depends(get_db)):
 
 
 @app.get("/api/claims/{cid}/bundle")
-def download_bundle(cid: str, db: Session = Depends(get_db)):
-    claim = db.get(Claim, cid)
-    if not claim or not claim.bundle:
-        log.warning("bundle download: %s has no bundle", cid)
+def download_bundle(cid: str, token: str = "", db: Session = Depends(get_db)):
+    user = user_from_query_token(token, db)
+    claim = _owned_or_404(db.get(Claim, cid), user)
+    if not claim.bundle:
         raise HTTPException(404, "no bundle — approve the claim first")
     log.info("bundle download: %s", cid)
     return Response(json.dumps(claim.bundle, indent=2),
@@ -264,12 +237,14 @@ def download_bundle(cid: str, db: Session = Depends(get_db)):
 
 
 @app.get("/api/claims/{cid}/documents/{name}/preview")
-def doc_preview(cid: str, name: str, page: int = 0, db: Session = Depends(get_db)):
-    """PNG render of a page (poppler), or {'text': ...} fallback. Bytes come from
-    object storage now — no filesystem, and no path-traversal surface (we look
-    the document up by claim + filename in the DB)."""
+def doc_preview(cid: str, name: str, page: int = 0, token: str = "",
+                db: Session = Depends(get_db)):
+    """PNG render of a page (poppler), or {'text': ...} fallback. Auth via ?token
+    (an <img>/<a> can't send an Authorization header). Bytes come from storage."""
     import storage
 
+    user = user_from_query_token(token, db)
+    claim = _owned_or_404(db.get(Claim, cid), user)
     doc = db.execute(
         select(Document).where(Document.claim_id == cid,
                                Document.filename == name)).scalar_one_or_none()
@@ -294,3 +269,32 @@ def doc_preview(cid: str, name: str, page: int = 0, db: Session = Depends(get_db
         text = "\n".join((p.extract_text() or "")
                          for p in PdfReader(io.BytesIO(blob)).pages)
         return JSONResponse({"text": text})
+
+
+# --- task tracking ---------------------------------------------------------
+@app.get("/api/tasks")
+def list_tasks(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    """All processing jobs for this hospital, newest first."""
+    claims = db.execute(
+        select(Claim).where(Claim.task_id.isnot(None),
+                            Claim.hospital_id == user.hospital_id)
+        .order_by(Claim.updated_at.desc())).scalars().all()
+    log.info("list_tasks(%s) -> %d job(s)", user.hospital_id, len(claims))
+    return [c.job() for c in claims]
+
+
+@app.get("/api/tasks/{task_id}")
+def get_task(task_id: str, db: Session = Depends(get_db),
+             user: User = Depends(get_current_user)):
+    """Track one job by its Celery task id (scoped to the caller's hospital)."""
+    claim = db.execute(
+        select(Claim).where(Claim.task_id == task_id)).scalar_one_or_none()
+    claim = _owned_or_404(claim, user)
+    view = claim.job()
+    try:                                   # best-effort — backend may have expired
+        from tasks import celery_app
+        view["celery_state"] = celery_app.AsyncResult(task_id).state
+    except Exception:
+        view["celery_state"] = None
+    log.info("get_task: %s stage=%s status=%s", task_id, claim.stage, claim.status)
+    return view
