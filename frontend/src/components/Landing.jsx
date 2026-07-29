@@ -14,7 +14,9 @@ const Shield = (p) => (
   </svg>
 )
 
-export default function Landing({ onSignIn }) {
+export default function Landing({ onSignIn, publicSite = false }) {
+  const DEMO_EMAIL = 'support@claimbridge.co.in'
+  const demoHref = `mailto:${DEMO_EMAIL}?subject=ClaimBridge%20demo%20request`
   return (
     <div>
       <div className="land-top">
@@ -25,8 +27,10 @@ export default function Landing({ onSignIn }) {
         <nav className="land-nav">
           <a href="#how">How it works</a>
           <a href="#proof">Accuracy</a>
-          <button className="link" onClick={onSignIn}>Log in</button>
-          <button className="btn primary" onClick={onSignIn}>Request a demo</button>
+          {!publicSite && <button className="link" onClick={onSignIn}>Log in</button>}
+          {publicSite
+            ? <a className="btn primary" href={demoHref}>Request a demo</a>
+            : <button className="btn primary" onClick={onSignIn}>Request a demo</button>}
         </nav>
       </div>
 
@@ -43,7 +47,9 @@ export default function Landing({ onSignIn }) {
             NHCX-format claim your clerks can approve in minutes, not days.
           </p>
           <div className="hero-cta">
-            <button className="btn primary lg" onClick={onSignIn}>Request a demo</button>
+            {publicSite
+              ? <a className="btn primary lg" href={demoHref}>Request a demo</a>
+              : <button className="btn primary lg" onClick={onSignIn}>Request a demo</button>}
             <a href="#how" className="btn ghost lg">See it work</a>
           </div>
           <div className="hero-stats">
@@ -170,11 +176,14 @@ export default function Landing({ onSignIn }) {
             <h4>PRODUCT</h4>
             <a href="#how">How it works</a>
             <a href="#proof">Accuracy</a>
-            <button className="link" onClick={onSignIn}>Log in</button>
+            {publicSite
+              ? <a href={demoHref}>Request a demo</a>
+              : <button className="link" onClick={onSignIn}>Log in</button>}
           </div>
           <div className="land-foot-col">
             <h4>COMPANY</h4>
-            <a href="#">About</a><a href="#">Security</a><a href="#">Contact</a>
+            <a href="#">About</a><a href="#">Security</a>
+            <a href={`mailto:${DEMO_EMAIL}`}>Contact</a>
           </div>
           <div className="land-foot-col">
             <h4>COMPLIANCE</h4>

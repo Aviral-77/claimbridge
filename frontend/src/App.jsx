@@ -11,7 +11,20 @@ import Reports from './components/Reports.jsx'
 
 const SESSION_KEY = 'claimbridge.session'
 
+// Public build (claimbridge.co.in) ships the landing page only — no backend.
+// Set VITE_PUBLIC_SITE=true at build time to enable it.
+const PUBLIC_SITE = import.meta.env.VITE_PUBLIC_SITE === 'true'
+const DEMO_EMAIL = 'support@claimbridge.co.in'
+
 export default function App() {
+  if (PUBLIC_SITE) {
+    const contact = () => {
+      window.location.href =
+        `mailto:${DEMO_EMAIL}?subject=ClaimBridge%20demo%20request`
+    }
+    return <Landing onSignIn={contact} publicSite />
+  }
+
   const [view, setView] = useState('landing')   // landing | login | app
   const [tab, setTab] = useState('dashboard')    // dashboard | upload | claims | review | reports
   const [session, setSession] = useState(null)
