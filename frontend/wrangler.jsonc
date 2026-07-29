@@ -1,0 +1,9 @@
+{
+  // Static-assets-only Worker: serves the built Vite site in ./dist.
+  // No server code (no "main") — Cloudflare hosts the files directly.
+  "name": "claimbridge",
+  "compatibility_date": "2025-07-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
